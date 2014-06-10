@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- WARNING: Eclipse auto-generated file.
+              Any modifications will be overwritten.
+              To include a user specific buildfile here, simply create one in the same
+              directory with the processing instruction <?eclipse.ant.import?>
+              as the first entry and export the buildfile again. -->
+<project basedir="." default="run" name="callRecord publisher">
+	<property name="carbon.home" value="./"/>
+	<property name="src.dir" value="src/"/>
+	 <property name="resources.dir" value="src/main/resources"/>
+	 <property name="temp.dir" value="temp"/>
+	<property name="class.dir" value="bin"/>
+	<property name="main-class" value="callRecordPublisher"/>
+    <path id="javac.classpath">
+        <pathelement location="bin"/>
+        <pathelement location="../wso2bam-2.4.0/repository/components/plugins/httpclient_4.2.5.wso2v1.jar"/>
+        <pathelement location="../wso2bam-2.4.0/repository/components/plugins/org.wso2.carbon.logging_4.2.0.jar"/>
+        <pathelement location="../wso2bam-2.4.0/repository/components/plugins/commons-pool_1.5.6.wso2v1.jar"/>
+        <pathelement location="../wso2bam-2.4.0/repository/components/plugins/google-collect_1.0.0.wso2v2.jar"/>
+        <pathelement location="../wso2bam-2.4.0/repository/components/plugins/guava_12.0.0.wso2v1.jar"/>
+        <pathelement location="../wso2bam-2.4.0/repository/components/plugins/libthrift_0.7.0.wso2v2.jar"/>
+        <pathelement location="../wso2bam-2.4.0/repository/components/plugins/slf4j.api_1.6.1.jar"/>
+        <pathelement location="../wso2bam-2.4.0/repository/components/plugins/slf4j.log4j12_1.6.1.jar"/>
+        <pathelement location="../wso2bam-2.4.0/repository/components/plugins/org.wso2.carbon.authenticator.stub_4.2.0.jar"/>
+        <pathelement location="../wso2bam-2.4.0/repository/components/plugins/org.wso2.carbon.databridge.agent.thrift_4.2.1.jar"/>
+        <pathelement location="../wso2bam-2.4.0/repository/components/plugins/org.wso2.carbon.databridge.commons.thrift_4.2.0.jar"/>
+        <pathelement location="../wso2bam-2.4.0/repository/components/plugins/org.wso2.carbon.databridge.commons_4.2.1.jar"/>
+        <pathelement location="../wso2bam-2.4.0/repository/components/plugins/org.wso2.carbon.identity.authentication_4.2.0.jar"/>
+        <pathelement location="../wso2bam-2.4.0/repository/components/plugins/org.wso2.carbon.queuing_4.2.0.jar"/>
+        <pathelement location="../wso2bam-2.4.0/repository/components/plugins/com.google.gson_2.1.0.jar"/>
+    </path>
+	<target name="init">
+	        <mkdir dir="${temp.dir}"/>
+	        <mkdir dir="${class.dir}"/>
+	    </target>
+    <target name="clean">
+        <delete dir="bin"/>
+    </target>
+    <!--target depends="clean" name="cleanall"/>
+    <target depends="build-subprojects,build-project" name="build"/>
+    <target name="build-subprojects"/>
+    <target depends="init" name="build-project">
+        <echo message="${ant.project.name}: ${ant.file}"/>
+        <javac debug="true" debuglevel="${debuglevel}" destdir="bin" includeantruntime="false" source="${source}" target="${target}">
+            <src path="src"/>
+            <classpath refid="callRecord publisher.classpath"/>
+        </javac>
+    </target>
+    <target description="Build all projects which reference this project. Useful to propagate changes." name="build-refprojects"/>
+    <target description="copy Eclipse compiler jars to ant lib directory" name="init-eclipse-compiler">
+        <copy todir="${ant.library.dir}">
+            <fileset dir="${ECLIPSE_HOME}/plugins" includes="org.eclipse.jdt.core_*.jar"/>
+        </copy>
+        <unzip dest="${ant.library.dir}">
+            <patternset includes="jdtCompilerAdapter.jar"/>
+            <fileset dir="${ECLIPSE_HOME}/plugins" includes="org.eclipse.jdt.core_*.jar"/>
+        </unzip>
+    </target>
+    <target description="compile project with Eclipse compiler" name="build-eclipse-compiler">
+        <property name="build.compiler" value="org.eclipse.jdt.core.JDTCompilerAdapter"/>
+        <antcall target="build"/>
+    </target>
+    <target name="callRecordPublisher">
+        <java classname="callRecordPublisher" failonerror="true" fork="yes">
+            <classpath refid="callRecord publisher.classpath"/>
+        </java>
+    </target-->
+	
+	<target name="compile" depends="init">
+	        <javac srcdir="${src.dir}" destdir="${class.dir}">
+	            <include name="*/**"/>
+	            <classpath refid="javac.classpath"/>
+	        </javac>
+	        <!--copy todir="${class.dir}" overwrite="true">
+	            <fileset dir="${resources.dir}">
+	                <include name="*.properties"/>
+	            </fi
+leset>
+	        </copy-->
+	    </target>
+	
+    <target name="run" depends="compile">
+        <echo>To configure host, port, username, password and No. of events use -Dhost=xxxx -Dport=xxxx -Dusername=xxxx -Dpassword=xxxx -Devents=xx</echo>
+        <java classname="callRecordPublisher" classpathref="javac.classpath" fork="true">
+            
+        </java>
+    </target>
+</project>

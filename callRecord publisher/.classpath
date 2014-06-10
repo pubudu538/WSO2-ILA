@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7"/>
+	<classpathentry kind="lib" path="/home/chamila/WSO2Training/WSO2/wso2bam-2.4.0/repository/components/plugins/httpclient_4.2.5.wso2v1.jar"/>
+	<classpathentry kind="lib" path="/home/chamila/WSO2Training/WSO2/wso2bam-2.4.0/repository/components/plugins/org.wso2.carbon.logging_4.2.0.jar"/>
+	<classpathentry kind="lib" path="/home/chamila/WSO2Training/WSO2/wso2bam-2.4.0/repository/components/plugins/commons-pool_1.5.6.wso2v1.jar"/>
+	<classpathentry kind="lib" path="/home/chamila/WSO2Training/WSO2/wso2bam-2.4.0/repository/components/plugins/google-collect_1.0.0.wso2v2.jar"/>
+	<classpathentry kind="lib" path="/home/chamila/WSO2Training/WSO2/wso2bam-2.4.0/repository/components/plugins/guava_12.0.0.wso2v1.jar"/>
+	<classpathentry kind="lib" path="/home/chamila/WSO2Training/WSO2/wso2bam-2.4.0/repository/components/plugins/libthrift_0.7.0.wso2v2.jar"/>
+	<classpathentry kind="lib" path="/home/chamila/WSO2Training/WSO2/wso2bam-2.4.0/repository/components/plugins/slf4j.api_1.6.1.jar"/>
+	<classpathentry kind="lib" path="/home/chamila/WSO2Training/WSO2/wso2bam-2.4.0/repository/components/plugins/slf4j.log4j12_1.6.1.jar"/>
+	<classpathentry kind="lib" path="/home/chamila/WSO2Training/WSO2/wso2bam-2.4.0/repository/components/plugins/org.wso2.carbon.authenticator.stub_4.2.0.jar"/>
+	<classpathentry kind="lib" path="/home/chamila/WSO2Training/WSO2/wso2bam-2.4.0/repository/components/plugins/org.wso2.carbon.databridge.agent.thrift_4.2.1.jar"/>
+	<classpathentry kind="lib" path="/home/chamila/WSO2Training/WSO2/wso2bam-2.4.0/repository/components/plugins/org.wso2.carbon.databridge.commons.thrift_4.2.0.jar"/>
+	<classpathentry kind="lib" path="/home/chamila/WSO2Training/WSO2/wso2bam-2.4.0/repository/components/plugins/org.wso2.carbon.databridge.commons_4.2.1.jar"/>
+	<classpathentry kind="lib" path="/home/chamila/WSO2Training/WSO2/wso2bam-2.4.0/repository/components/plugins/org.wso2.carbon.identity.authentication_4.2.0.jar"/>
+	<classpathentry kind="lib" path="/home/chamila/WSO2Training/WSO2/wso2bam-2.4.0/repository/components/plugins/org.wso2.carbon.queuing_4.2.0.jar"/>
+	<classpathentry kind="lib" path="/home/chamila/WSO2Training/WSO2/wso2bam-2.4.0/repository/components/plugins/com.google.gson_2.1.0.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
