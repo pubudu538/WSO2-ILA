@@ -1,0 +1,58 @@
+<%
+
+ var url  = "https://localhost:9445/services/LogAnalyzerDataServiceforUsers/view/topsitesuserfordonutweek/"+user_name+"/"+user_name1;  
+    var type = "application/json";
+    var headers = {"Accept": "application/json"};
+
+    var result=get(url,"",headers);
+    var data=result.data;
+    var data=parse(data);
+
+    var elementArray=data["topsitesuserWCollection"];
+    var re3=elementArray["topsitesuserw"];
+
+ var value = 0;
+
+if(re3 == null)
+{
+       print("{value: 100, label: 'No Data Found \\n for \\n Last Week',formatted: '' }");
+}
+else
+{
+  if(re3 instanceof Array)
+  {
+
+  
+for (var i = 0 ; i < re3.length; i++) {
+  
+  value = parseInt(re3[i].total) + value;
+
+}
+    
+
+   for (var i = 0 ; i < re3.length; i++) {
+	 
+
+   if(i==re3.length-1)
+   {
+      print("{value: "+re3[i].total+", label: '"+re3[i].siteIp+"', formatted: 'approx "+((re3[i].total/value)*100).toFixed(2)+"% \\n"+(re3[i].total/1024).toFixed(2)+"MB' }");
+   }
+   else
+   {
+
+      print("{value: "+re3[i].total+", label: '"+re3[i].siteIp+"', formatted: 'approx "+((re3[i].total/value)*100).toFixed(2)+"% \\n"+(re3[i].total/1024).toFixed(2)+"MB' },"+'\n');
+     
+   }
+				
+ }
+
+}else
+{
+    print("{value: "+re3.total+", label: '"+re3.siteIp+"', formatted: 'approx "+100+"% \\n"+(re3.total/1024).toFixed(2)+"MB' }");
+ 
+}
+
+
+}
+
+%>

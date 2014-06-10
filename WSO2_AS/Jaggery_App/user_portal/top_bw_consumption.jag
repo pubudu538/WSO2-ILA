@@ -1,0 +1,748 @@
+<%
+
+   include("functions/user_session_validate.jag");
+
+%>
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!-- saved from url=(0064)https://10.100.4.37:9443/carbon/admin/index.jsp?loginStatus=true -->
+<html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+
+    <title>WSO2 Management Console</title>
+
+            
+    <link href="css/global.css" rel="stylesheet" type="text/css" media="all">
+
+    <link href="images/registry_styles_ajaxprocessor.jsp" rel="stylesheet" type="text/css" media="all">
+
+    <link href="css/main.css" rel="stylesheet" type="text/css" media="all">
+    <link href="css/jqueryui-themeroller.css" rel="stylesheet" type="text/css" media="all">
+    <link href="css/dialog.css" rel="stylesheet" type="text/css" media="all">
+    <link rel="stylesheet" href="css/carbonFormStyles.css">
+    <!--[if gte IE 8]>
+    <link href="../dialog/css/dialog-ie8.css" rel="stylesheet" type="text/css" media="all"/>        
+    <![endif]-->
+    <!--[if gte IE 7]>
+    <link href="../dialog/css/dialog-ie8.css" rel="stylesheet" type="text/css" media="all"/>
+    <![endif]-->
+    <link rel="icon" href="images/favicon.ico" type="image/x-icon">
+    <link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon">
+
+    <script type="text/javascript" src="js/jquery-1.5.2.min.js"></script><style type="text/css"></style>
+    <script type="text/javascript" src="js/jquery.form.js"></script>
+    <script type="text/javascript" src="js/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="js/jquery.validate.js"></script>    
+    <script type="text/javascript" src="js/jquery.cookie.js"></script>
+    <script type="text/javascript" src="js/jquery.ui.core.min.js"></script>
+    <script type="text/javascript" src="js/jquery.ui.widget.min.js"></script>
+    <script type="text/javascript" src="js/jquery.ui.tabs.min.js"></script>
+    <script type="text/javascript" src="js/main.js"></script>
+    <script type="text/javascript" src="js/WSRequest.js"></script>
+    <script type="text/javascript" src="js/cookies.js"></script>
+    
+  <style type="text/css" title="currentStyle">
+            @import "media/css/demo_page.css";
+            @import "media/css/demo_table.css";
+            @import "media/css/TableTools.css";
+        </style>
+        <script type="text/javascript" charset="utf-8" src="media/js/jquery.js"></script>
+        <script type="text/javascript" charset="utf-8" src="media/js/jquery.dataTables.js"></script>
+        <script type="text/javascript" charset="utf-8" src="media/js/ZeroClipboard.js"></script>
+        <script type="text/javascript" charset="utf-8" src="media/js/TableTools.js"></script>
+
+    <script type="text/javascript" src="js/customControls.js"></script>
+
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="date_time/css/bootstrap.css">
+    
+    <!-- timepicker -->
+    <link rel="stylesheet" href="date_time/css/plugins/timepicker/bootstrap-timepicker.min.css">
+    <!-- Datepicker -->
+    <link rel="stylesheet" href="date_time/css/plugins/datepicker/datepicker.css">
+    
+    <!-- Theme CSS -->
+    <link rel="stylesheet" href="date_time/css/style.css">
+
+
+    <!-- Bootstrap -->
+    <script src="date_time/js/bootstrap.js"></script>
+    <!-- Datepicker -->
+    <script src="date_time/js/plugins/datepicker/bootstrap-datepicker.js"></script>
+    <!-- Timepicker -->
+    <script src="date_time/js/plugins/timepicker/bootstrap-timepicker.min.js"></script>
+    
+
+
+    <!-- Theme framework -->
+    <script src="date_time/js/eakroko.js"></script>
+
+    <script type="text/javascript">    
+
+                   
+                var ggh = jQuery.noConflict();
+
+                    ggh.fn.dataTableExt.oApi.fnReloadAjax = function ( oSettings, sNewSource, fnCallback, bStandingRedraw )
+                {
+                    // DataTables 1.10 compatibility - if 1.10 then versionCheck exists.
+                    // 1.10s API has ajax reloading built in, so we use those abilities
+                    // directly.
+                    if ( ggh.fn.dataTable.versionCheck ) {
+                        var api = new ggh.fn.dataTable.Api( oSettings );
+                 
+                        if ( sNewSource ) {
+                            api.ajax.url( sNewSource ).load( fnCallback, !bStandingRedraw );
+                        }
+                        else {
+                            api.ajax.reload( fnCallback, !bStandingRedraw );
+                        }
+                        return;
+                    }
+                 
+                    if ( sNewSource !== undefined && sNewSource !== null ) {
+                        oSettings.sAjaxSource = sNewSource;
+                    }
+                 
+                    // Server-side processing should just call fnDraw
+                    if ( oSettings.oFeatures.bServerSide ) {
+                        this.fnDraw();
+                        return;
+                    }
+                 
+                    this.oApi._fnProcessingDisplay( oSettings, true );
+                    var that = this;
+                    var iStart = oSettings._iDisplayStart;
+                    var aData = [];
+                 
+                    this.oApi._fnServerParams( oSettings, aData );
+                 
+                    oSettings.fnServerData.call( oSettings.oInstance, oSettings.sAjaxSource, aData, function(json) {
+                        /* Clear the old information from the table */
+                        that.oApi._fnClearTable( oSettings );
+                 
+                        /* Got the data - add it to the table */
+                        var aData =  (oSettings.sAjaxDataProp !== "") ?
+                            that.oApi._fnGetObjectDataFn( oSettings.sAjaxDataProp )( json ) : json;
+                 
+                        for ( var i=0 ; i<aData.length ; i++ )
+                        {
+                            that.oApi._fnAddData( oSettings, aData[i] );
+                        }
+                         
+                        oSettings.aiDisplay = oSettings.aiDisplayMaster.slice();
+                 
+                        that.fnDraw();
+                 
+                        if ( bStandingRedraw === true )
+                        {
+                            oSettings._iDisplayStart = iStart;
+                            that.oApi._fnCalculateEnd( oSettings );
+                            that.fnDraw( false );
+                        }
+                 
+                        that.oApi._fnProcessingDisplay( oSettings, false );
+                 
+                        /* Callback user function - for event handlers etc */
+                        if ( typeof fnCallback == 'function' && fnCallback !== null )
+                        {
+                            fnCallback( oSettings );
+                        }
+                    }, oSettings );
+                };
+
+                var oTable = "";
+
+                var triggerCounter = 0;
+
+                var user_name = "";
+                            
+                function makeTable(category_type){
+
+                    if(category_type=="Current"){
+
+                         if(triggerCounter > 0){
+                             oTable.fnDestroy();
+                        }
+
+                    user_name = "<% include("functions/getUserName.jag"); %>"; 
+
+                            oTable =  ggh('#example').dataTable( {
+                                    "sPaginationType": "full_numbers",
+                                    "bProcessing": true,
+                                    "bRetrieve": true,
+                                    "oLanguage": {
+                                     "sZeroRecords": "No Matching Record Found"
+                                    },
+                                    "fnInitComplete": function ( oSettings ) {
+                                      oSettings.oLanguage.sZeroRecords = "No matching records found"
+                                    },
+                                    "bRetrieve": true,"sDom": 'T<"clear">lfrtip',
+                                    "oTableTools": {
+                                        "sSwfPath": "media/swf/copy_csv_xls_pdf.swf"
+                                    },
+                                    "bDestroy": true,
+                                    "sAjaxSource": "functions/current_topsites.jag?name="+user_name
+                            } );
+
+                            triggerCounter++;
+
+
+                    }else if(category_type=="Day"){
+
+                        if(triggerCounter > 0){
+                             oTable.fnDestroy();
+                        }
+
+                        user_name = "<% include("functions/getUserName.jag"); %>"; 
+
+                            oTable =  ggh('#example').dataTable( {
+                                    "sPaginationType": "full_numbers",
+                                    "bProcessing": true,
+                                    "bRetrieve": true,
+                                    "oLanguage": {
+                                     "sZeroRecords": "No Matching Record Found"
+                                    },
+                                    "fnInitComplete": function ( oSettings ) {
+                                      oSettings.oLanguage.sZeroRecords = "No matching records found"
+                                    },
+                                    "bRetrieve": true,"sDom": 'T<"clear">lfrtip',
+                                    "oTableTools": {
+                                        "sSwfPath": "media/swf/copy_csv_xls_pdf.swf"
+                                    },
+                                    "bDestroy": true,
+                                    "sAjaxSource": "functions/day_topsites.jag?name="+user_name
+                            } );
+
+                            triggerCounter++;
+
+
+                    }else if(category_type=="Month"){
+
+                          
+                            if(triggerCounter > 0){
+                             oTable.fnDestroy();
+                        }
+
+                        user_name = "<% include("functions/getUserName.jag"); %>"; 
+
+                            oTable =  ggh('#example').dataTable( {
+                                    "sPaginationType": "full_numbers",
+                                    "bProcessing": true,
+                                    "bRetrieve": true,
+                                    "oLanguage": {
+                                     "sZeroRecords": "No Matching Record Found"
+                                    },
+                                    "fnInitComplete": function ( oSettings ) {
+                                      oSettings.oLanguage.sZeroRecords = "No matching records found"
+                                    },
+                                    "bRetrieve": true,"sDom": 'T<"clear">lfrtip',
+                                    "oTableTools": {
+                                        "sSwfPath": "media/swf/copy_csv_xls_pdf.swf"
+                                    },
+                                    "bDestroy": true,
+                                    "sAjaxSource": "functions/month_topsites.jag?name="+user_name
+                            } );
+
+                            triggerCounter++;            
+
+                    }else if(category_type=="Year"){
+
+                        user_name = "<% include("functions/getUserName.jag"); %>"; 
+                          
+                           if(triggerCounter > 0){
+                             oTable.fnDestroy();
+                        }
+
+
+                            oTable =  ggh('#example').dataTable( {
+                                    "sPaginationType": "full_numbers",
+                                    "bProcessing": true,
+                                    "bRetrieve": true,
+                                    "oLanguage": {
+                                     "sZeroRecords": "No Matching Record Found"
+                                    },
+                                    "fnInitComplete": function ( oSettings ) {
+                                      oSettings.oLanguage.sZeroRecords = "No matching records found"
+                                    },
+                                    "bRetrieve": true,"sDom": 'T<"clear">lfrtip',
+                                    "oTableTools": {
+                                        "sSwfPath": "media/swf/copy_csv_xls_pdf.swf"
+                                    },
+                                    "bDestroy": true,
+                                    "sAjaxSource": "functions/year_topsites.jag?name="+user_name
+                            } );
+
+                            triggerCounter++;   
+
+                    }else{
+                            //alert("Done");
+                            triggerCounter = 0;
+                    }
+                };
+    
+       function getOptionValue() {
+
+                        var option_value = document.getElementById("category_select");
+                        var option_string = option_value.options[option_value.selectedIndex].text;
+                        document.getElementById("change_text").innerHTML=option_string;
+
+                    if(option_string=="Current"){
+                        document.getElementById("change_text").innerHTML=option_string;         
+                        document.getElementById("destination").style.display="";                        
+                        document.getElementById("time_header").style.display="";
+                        makeTable(option_string);
+                    }else if (option_string=="Day"){
+                        document.getElementById("change_text").innerHTML=option_string;
+                        document.getElementById("destination").style.display="";                        
+                        document.getElementById("time_header").style.display="";
+                        makeTable(option_string); 
+
+                    }else if (option_string=="Month"){
+                        document.getElementById("change_text").innerHTML=option_string;
+                        document.getElementById("destination").style.display="";
+                        document.getElementById("time_header").style.display="";
+                        makeTable(option_string);
+
+                    }else if (option_string=="Year"){
+                        document.getElementById("change_text").innerHTML=option_string;
+                        document.getElementById("destination").style.display="";
+                        document.getElementById("time_header").style.display="";
+                        makeTable(option_string);
+                    }else{
+                        document.getElementById("change_text").innerHTML="";            
+                        document.getElementById("destination").style.display="none";                        
+                        document.getElementById("time_header").style.display="none";
+                        makeTable(option_string);
+                };
+        
+    }
+    </script>
+
+    <link rel="stylesheet" href="popup/css/jquery.ui.all.css">
+    <script src="popup/js/jquery-1.9.1.js"></script>
+    <script src="js/jquery.ui.core.js"></script>
+    <script src="js/jquery.ui.widget.js"></script>
+    <script src="js/jquery.ui.mouse.js"></script>
+    <script src="js/jquery.ui.button.js"></script>
+    <script src="js/jquery.ui.draggable.js"></script>
+    <script src="js/jquery.ui.position.js"></script>
+    <script src="js/jquery.ui.resizable.js"></script>
+    <script src="js/jquery.ui.button.js"></script>
+    <script src="js/jquery.ui.dialog.js"></script>
+    <script src="js/jquery.ui.effect.js"></script>  
+    
+    <link rel="stylesheet" href="popup/css/demos.css">
+
+    <style>
+        div#users-contain { width: 350px; margin: 20px 0; }
+        div#users-contain table { margin: 1em 0; border-collapse: collapse; width: 100%; }
+        div#users-contain table td, div#users-contain table th { border: 1px solid #eee; padding: .6em 10px; text-align: left; }
+        .ui-dialog .ui-state-error { padding: .3em; }
+        .validateTips { border: 1px solid transparent; padding: 0.3em; }
+    </style>
+    
+   
+    <!-- This script handles the tabbed pane functionality -->
+    <script>
+    var tt = jQuery.noConflict();
+    
+    tt(function() {
+    
+        var name = tt( "#name" ),
+            email = tt( "#email" ),
+            password = tt( "#password" ),
+            allFields = tt( [] ).add( name ).add( email ).add( password ),
+            tips = tt( ".validateTips" );
+
+        tt( "#dialog-form" ).dialog({
+            autoOpen: false,
+            height: 500,
+            width: 950,
+            modal: true,
+            buttons: {
+                "Generate Report": function() {
+                    tableToExcel('exportTable', 'W3C Example Table');
+                },
+                Cancel: function() {
+                    tt( this ).dialog( "close" );
+                }
+            },
+            close: function() {
+                allFields.val( "" ).removeClass( "ui-state-error" );
+            }
+        });
+
+        tt( "#generate_reprot" )
+            .button()
+            .click(function() {
+                tt( "#dialog-form" ).dialog( "open" );
+            });
+    });
+    </script>
+    
+
+
+</head>
+
+
+            <body style="">
+                <noscript>
+                    &lt;div class="something-wrong"&gt;
+                    &lt;div class="title"&gt;JavaScript is disabled on your browser&lt;/div&gt;
+                    &lt;div class="content"&gt;Please enable JavaScript or upgrade to a JavaScript-capable browser to use WSO2 Products.&lt;/div&gt;
+                    &lt;/div&gt;
+                </noscript>
+                <!--[if lte IE 6]>
+                <div class="something-wrong">
+                        <div class="title">Did you know that your Internet Explorer is out of date?</div>
+                        <div class="content">To get the best possible experience using our website we recommend that you upgrade to a newer version.</div>
+                </div>
+                <![endif]-->
+
+                <div id="dcontainer"></div>
+                <script type="text/javascript" src="js/dialog.js"></script>
+
+                <!-- JS imports for collapsible menu -->
+                <script src="js/yahoo-dom-event.js" type="text/javascript"></script>
+                <script src="js/animation-min.js" type="text/javascript"></script>
+                <script src="js/template.js" type="text/javascript"></script>
+                <script src="js/yahoo-min.js" type="text/javascript"></script>
+                <script src="js/selector-min.js" type="text/javascript"></script>
+
+                <table id="main-table" border="0" cellspacing="0">
+                    <tbody><tr>
+                            <td id="header" colspan="3">
+
+                                <!--[IF IE 7]>
+                                        <style>
+                                                div#header-div div.right-links{
+                                                        position:absolute;
+                                                }
+                                        </style>
+                                <![endif]-->
+
+                                <div id="header-div">
+                                    <div class="right-logo">Management Console</div>
+                                    <div class="middle-ad">
+
+                                    </div>
+                                    <div class="header-links">
+                                        <div class="right-links">            
+                                            <ul>
+                                <li class="middle">
+                                    <label id="logged-user">
+                                       <strong>Signed-in as:</strong>&nbsp;  <% print(user_name+"@wso2.com"); %>
+                                    </label>
+                                </li>
+                                <li class="middle">|</li>
+                                <li class="right">
+                                    <a href="functions/logOut.jag">Sign-out</a>
+                                </li>
+
+                                <li class="middle">|</li>
+
+                                <li class="left">
+                                    <a href="about.jag">About</a>
+                                </li>
+                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="vertical-menu-container" id="vertical-menu-container" style="">
+                                <div id="menu-panel-button0" class="showToHidden"></div>
+                                <div id="menu-panel-button1" class="menu-panel-buttons selected"><span>Main</span></div>
+                                <div id="menu-panel-button2" class="menu-panel-buttons"><span>User</span></div>
+                                <div id="menu-panel-button3" class="menu-panel-buttons"><span>Configure</span></div>
+                                <div id="menu-panel-button4" class="menu-panel-buttons"><span>Tools</span></div>
+                                <div id="menu-panel-button5" class="menu-panel-buttons" style="display: none;"><span>Extensions</span></div>
+                                <div id="menu-panel-button_dummy" style="display:none"></div>
+                            </td>
+                            <td id="menu-panel" valign="top">
+                                <table id="menu-table" border="0" cellspacing="0">
+                                    <tbody><tr>
+                                            <td id="region1">
+
+                                                <div id="menu"> 
+                                                    <ul class="main">
+                                                        <li><a href="home.jag" class="menu-home">Home</a></li>
+                                                        <li id="region1_dashboard_main_menu" class="menu-header"  onclick="mainMenuCollapse(this.childNodes[0])" style="cursor:pointer"><img src="images/up-arrow.gif" class="mMenuHeaders" id="region1_dashboard_main_menu"/>Sites</li>
+                                                        <li class="normal"><ul class="sub"><li><a href="site_search.jag" class="menu-default" style="background-image: url(images/search-top.png);">Search</a></li>
+                                                                <li><a href="top_bw_consumption.jag" class="menu-default" style="background-image: url(images/analyzerFramework.png);">Top Sites</a></li>
+                                                            </ul>
+                                                        </li>
+
+                                                        <li id="region1_manage_gs" class="menu-header"  onclick="mainMenuCollapse(this.childNodes[0])" style="cursor:pointer"><img src="images/up-arrow.gif" class="mMenuHeaders" id="region1_manage_gs"/>Calls</li>
+
+                                                        <li class="normal"><ul class="sub">
+
+                                                                <li><a href="top_call_destinations.jag" class="menu-default" style="background-image: url(images/gadgetRepo.gif);">Top Destinations</a></li>
+
+                                                            </ul></li>
+                                                    </ul></li>
+
+
+
+
+                                                    </ul>
+                                                    </li>
+                                                    </ul></li>
+                                                    </ul></li> </ul></div>
+
+
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td id="region2">
+
+
+
+                                                <div id="menu"> <ul class="main"> </ul></div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td id="region3">
+
+
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td id="region5">
+                                                <div id="menu"> 
+                                                    <ul class="main">
+                                                            <li id="region5_tools_menu" class="menu-header" onclick="mainMenuCollapse(this.childNodes[0])" style="cursor: pointer; display: none;"><img src="./WSO2 Management Console_files/up-arrow.gif" class="mMenuHeaders" id="region5_tools_menu">Dashboard</li>
+                                                            <li class="normal" style="display: none;">
+                                                            <ul class="sub">
+                                                                <li><a target="_blank" href="dashboard_user/user_dashboard.jag" class="menu-default" style="background-image: url(images/chart_bar.gif);">Dashboard</a></li>
+                                                            </ul>
+                                                    </li></ul>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td><img src="images/1px.gif" width="225px" height="1px"></td>
+                                        </tr>
+                                    </tbody></table>
+                            </td>
+                            <td id="middle-content">
+                                <table id="content-table" border="0" cellspacing="0">
+                                    <tbody><tr>
+                                            <td id="page-header-links">
+
+
+
+
+
+                                                <table class="page-header-links-table" cellspacing="0">
+                                                    <tbody><tr>
+                                                            <td class="breadcrumbs">
+                                                                <table class="breadcrumb-table" cellspacing="0">
+                                                                    <tbody><tr>                              
+                                                                            <td>
+                                                                                <div id="breadcrumb-div"></div>
+                                                                            </td>
+                                                                        </tr>
+
+                                                                    </tbody></table>
+                                                            </td>
+
+                                                          
+
+                                                        </tr>
+                                                    </tbody></table>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td id="body">
+                                                <img src="images/1px.gif" width="735px" height="1px">
+
+                                                    <script type="text/javascript">
+                                                            var msgId;
+
+                                                            msgId = 'MSG13891711928680.4057310190033303';
+
+                                                    </script>
+
+                                                    <div id="middle">
+
+                                                        <h2>
+                                                            Top Sites
+                                                        </h2>
+
+                                                        <p>&nbsp;</p>
+
+                                                        <div id="workArea">
+                                                            <div id="systemInfoDiv">
+
+                                                                <div id="result"><!--
+                                                     ~ Copyright (c) 2005-2014, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+                                                     ~
+                                                     ~ WSO2 Inc. licenses this file to you under the Apache License,
+                                                     ~ Version 2.0 (the "License"); you may not use this file except
+                                                     ~ in compliance with the License.
+                                                     ~ You may obtain a copy of the License at
+                                                     ~
+                                                     ~    http://www.apache.org/licenses/LICENSE-2.0
+                                                     ~
+                                                     ~ Unless required by applicable law or agreed to in writing,
+                                                     ~ software distributed under the License is distributed on an
+                                                     ~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+                                                     ~ KIND, either express or implied.  See the License for the
+                                                     ~ specific language governing permissions and limitations
+                                                     ~ under the License.
+                                                                    -->
+                                                                     <div id="middle" style="width: 1050px;" id="middle">
+
+                                                                            <div id="workArea">
+                                                                                <form action="listbar.jsp" name="searchForm">
+                                                                                    <table class="styledLeft">
+                                                                                        <tbody>
+
+                                                                                            <tr>
+                                                                                                <td>
+                                                                                                    <table style="border:0 !important; ">
+                                                                                                        <tbody>
+                                                                                                            <tr style="border:0 !important; ">
+                                                                                                                <td style="border:0 !important; ">
+                                                                                                                    <nobr>
+                                                                                                                        Time Category &nbsp;&nbsp;&nbsp;: &nbsp;
+                                                                                                                        <select name="toolType" id="category_select" onchange="getOptionValue();">
+                                                                                                                            <option value="-1" selected="selected">
+                                                                                                                                -- Select a Category --
+                                                                                                                            </option>
+                                                                                                                            <option value="1">
+                                                                                                                                Current
+                                                                                                                            </option>
+                                                                                                                            <option value="2">
+                                                                                                                                Day
+                                                                                                                            </option>
+                                                                                                                            <option value="3">
+                                                                                                                                Month
+                                                                                                                            </option>
+                                                                                                                            <option value="4">
+                                                                                                                                Year
+                                                                                                                            </option>
+                                                                                                                        </select>                                
+                                                                                                                    </nobr>
+                                                                                                                </td>
+                                                                                                            </tr>
+                                                                                                        </tbody>
+                                                                                                    </table>
+                                                                                                </td>
+                                                                                            </tr>
+
+
+
+
+                                                                                        </tbody>
+                                                                                    </table>
+
+                                                                                    <table style="margin-top:10px;" class="styledLeft" >
+                                                                                        <tbody>
+                                                                                            <tr style="background: #ECECEC; display:none  !important;" id="time_header">
+                                                                                                <td>
+                                                                                                    <table style="border:0  !important; ">
+                                                                                                        <tbody>
+                                                                                                            <tr style="border:0  !important; ">
+                                                                                                                <td style="border:0  !important; ">
+                                                                                                                    <h3>Top Sites - <bdi id="change_text" ></bdi></h3>                                                                                                                    
+                                                                                                                </td>
+                                                                                                            </tr>
+                                                                                                        </tbody>
+                                                                                                    </table>
+                                                                                                </td>
+                                                                                            </tr>
+
+
+                                                                                            <tr style="background: #ECECEC;">
+                                                                                                <td style="display:none;" id="destination" class="formRow">
+                                                                                                    <div id="container">
+                                                                                                        <div id="demo">                                                                                                              
+                                                                                                            <table cellpadding="0" cellspacing="0" border="0" class="display" id="example">
+                                                                                                               <thead>
+                                                                                                                            <tr>
+                                                                                                                                <th>ID</th>
+                                                                                                                                <th>Site IP</th>
+                                                                                                                                <th>Usage (MB)</th>
+                                                                                                                            </tr>
+                                                                                                                        </thead>
+                                                                                                                        <tbody>
+                                                                                                                           
+
+                                                                                                                        </tbody>
+                                                                                                                
+                                                                                                            </table>
+                                                                                                            
+                                                                                                        </div>
+                                                                                                    </div>
+
+                                                                                                </td>
+
+
+
+
+                                                                                                
+
+
+                                                                                                
+
+                                                                                            </tr>
+
+
+
+                                                                                        </tbody></table>
+
+
+
+
+
+                                                                                </form>
+
+                                                                            </div>
+                                                                        </div>
+
+                                                                    </div>
+
+
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+
+                                                        </td>
+                                                        </tr>
+                                                        </tbody></table>
+                                                        </td>
+                                                        </tr>
+                                                        <tr>
+
+                                                        </tr>
+                                                        <tr>
+                                                            <td id="footer" colspan="3">
+
+                                                                <div id="footer-div">
+                                                                    <div class="footer-content">
+                                                                        <div class="copyright">
+                                                                            © 2005 - 2014 WSO2 Inc. All Rights Reserved.
+                                                                        </div>
+                                                                        <!--div class="poweredby">
+                                                                        </div-->
+                                                                    </div>
+                                                                </div>
+
+                                                            </td>
+                                                        </tr>
+                                                        </tbody></table>
+                                                        <script type="text/javascript">
+                                                            if (Function('/*@cc_on return document.documentMode===10@*/')()) {
+                                                                document.documentElement.className += ' ie10';
+                                                            }
+                                                        </script>
+
+
+
+                                                        </body></html>

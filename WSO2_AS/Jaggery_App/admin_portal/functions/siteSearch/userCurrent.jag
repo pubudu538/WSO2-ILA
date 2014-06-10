@@ -1,0 +1,93 @@
+<%
+    
+ 
+    var name = request.getParameter("name");
+    
+
+    var url  = "https://localhost:9445/services/ilaService/view/userCurrent/"+name;  
+
+    var type = "application/json";
+    var headers = {"Accept": "application/json"};
+
+    var result=get(url,"",headers);
+    var data=result.data;
+    var data=parse(data);
+
+
+
+    var elementArray=data["userCurrent"];
+    var re3=elementArray["siteBandwidth"];
+
+
+    if(re3 instanceof Array ){
+       // print("Array");
+
+        var dataSet = {
+          "sEcho": 1,
+          "iTotalRecords": re3.length,
+          "iTotalDisplayRecords": re3.length,
+          "aaData": [
+          ]
+        };
+
+        for(var i=0;i<re3.length;i++){
+            var temp = new Array();
+            temp.push(i+1);
+            for(key in re3[i]){
+                if(key == "siteIp"){
+              var urlData = re3[i].siteIp;
+              var url = "<a target='_blank' href='http://"+urlData+"/'>"+urlData+"</a>";
+              temp.push(url);
+            }else{
+              temp.push(re3[i][key]);
+            }
+            }
+            dataSet.aaData.push(temp);
+        }
+
+
+    }else{
+       // print("Not an Array");
+
+           if(re3 == null){
+
+           var dataSet = {
+            "sEcho": 3,
+            "iTotalRecords": 0,
+            "iTotalDisplayRecords": 0,
+            "aaData": [
+            ]
+          };     
+
+         }else{
+
+          var temp = new Array();
+
+           var dataSet = {
+            "sEcho": 3,
+            "iTotalRecords": 1,
+            "iTotalDisplayRecords": 1,
+            "aaData": [
+            ]
+          };     
+          
+          temp.push(1);
+          
+                   var url = "<a target='_blank' href='http://"+re3.siteIp+"/'>"+re3.siteIp+"</a>";
+                   temp.push(url);
+          temp.push(re3.bandwidth);
+
+          dataSet.aaData.push(temp);
+
+         }      
+
+        
+        
+    }       
+
+    print(stringify(dataSet));
+
+
+    
+
+%>

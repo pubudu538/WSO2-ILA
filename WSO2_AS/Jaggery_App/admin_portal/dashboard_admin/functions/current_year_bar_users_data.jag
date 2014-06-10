@@ -1,0 +1,368 @@
+<%
+
+ var url  = "https://localhost:9445/services/LogAnalyzerDataService/view/currentyeardataforgraph";
+                
+ var type = "json";
+ var headers = {"Content-Type": "application/json"};      
+
+ var result=get(url,type,headers);
+ var data=result.data;
+ var data=parse(data);           
+
+
+ var elementArray=data["yearcurrentbardataCollection"];
+ var re3=elementArray["yearcurrentbardata"];
+
+ var month1=new Array();
+ var month2=new Array();
+ var month3=new Array();
+ var month4=new Array();
+ var month5=new Array();
+ var month6=new Array();
+ var month7=new Array();
+ var month8=new Array();
+ var month9=new Array();
+ var month10=new Array();
+ var month11=new Array();
+ var month12=new Array();
+
+ var today = new Date();
+
+ var num=parseInt(today.getMonth()+1);
+
+var months=new Array();
+
+months.push(month1);
+months.push(month2);
+months.push(month3);
+months.push(month4);
+months.push(month5);
+months.push(month6);
+months.push(month7);
+months.push(month8);
+months.push(month9);
+months.push(month10);
+months.push(month11);
+months.push(month12);
+
+
+if(re3!=null)
+{
+    
+
+  if(re3 instanceof Array)
+  {
+
+    for (var i = 0; i <re3.length; i++) {
+
+      if((re3[i].month).substring(5)=='01')
+      {
+        month1.push(getfullname(re3[i].full_name));
+        month1.push((re3[i].amount/1024).toFixed(2));
+
+      }else if((re3[i].month).substring(5)=='02')
+      {
+        month2.push(getfullname(re3[i].full_name));
+        month2.push((re3[i].amount/1024).toFixed(2));
+
+      }else if((re3[i].month).substring(5)=='03')
+      {
+         month3.push(getfullname(re3[i].full_name));
+        month3.push((re3[i].amount/1024).toFixed(2));
+        
+      }else if((re3[i].month).substring(5)=='04')
+      {
+         month4.push(getfullname(re3[i].full_name));
+         month4.push((re3[i].amount/1024).toFixed(2));
+        
+      }else if((re3[i].month).substring(5)=='05')
+      {
+         month5.push(getfullname(re3[i].full_name));
+         month5.push((re3[i].amount/1024).toFixed(2));
+        
+      }else if((re3[i].month).substring(5)=='06')
+      {
+         month6.push(getfullname(re3[i].full_name));
+         month6.push((re3[i].amount/1024).toFixed(2));
+        
+      }else if((re3[i].month).substring(5)=='07')
+      {
+         month7.push(getfullname(re3[i].full_name));
+         month7.push((re3[i].amount/1024).toFixed(2));
+        
+      }else if((re3[i].month).substring(5)=='08')
+      {
+         month8.push(getfullname(re3[i].full_name));
+         month8.push((re3[i].amount/1024).toFixed(2));
+        
+      }else if((re3[i].month).substring(5)=='09')
+      {
+         month9.push(getfullname(re3[i].full_name));
+         month9.push((re3[i].amount/1024).toFixed(2));
+        
+      }else if((re3[i].month).substring(5)=='10')
+      {
+         month10.push(getfullname(re3[i].full_name));
+         month10.push((re3[i].amount/1024).toFixed(2));
+        
+      }else if((re3[i].month).substring(5)=='11')
+      {
+         month11.push(getfullname(re3[i].full_name));
+         month11.push((re3[i].amount/1024).toFixed(2));
+        
+      }else if((re3[i].month).substring(5)=='12')
+      {
+         month12.push(getfullname(re3[i].full_name));
+         month12.push((re3[i].amount/1024).toFixed(2));
+        
+      }
+
+
+    };
+
+
+      
+  }
+  else
+  {
+
+     if((re3.month).substring(5)=='01')
+      {
+        month1.push(getfullname(re3.full_name));
+        month1.push((re3.amount/1024).toFixed(2));
+
+      }else if((re3.month).substring(5)=='02')
+      {
+        month2.push(getfullname(re3.full_name));
+        month2.push((re3.amount/1024).toFixed(2));
+
+      }else if((re3.month).substring(5)=='03')
+      {
+         month3.push(getfullname(re3.full_name));
+        month3.push((re3.amount/1024).toFixed(2));
+        
+      }else if((re3.month).substring(5)=='04')
+      {
+         month4.push(getfullname(re3.full_name));
+         month4.push((re3.amount/1024).toFixed(2));
+        
+      }else if((re3.month).substring(5)=='05')
+      {
+         month5.push(getfullname(re3.full_name));
+         month5.push((re3.amount/1024).toFixed(2));
+        
+      }else if((re3.month).substring(5)=='06')
+      {
+         month6.push(getfullname(re3.full_name));
+         month6.push((re3.amount/1024).toFixed(2));
+        
+      }else if((re3.month).substring(5)=='07')
+      {
+         month7.push(getfullname(re3.full_name));
+         month7.push((re3.amount/1024).toFixed(2));
+        
+      }else if((re3.month).substring(5)=='08')
+      {
+         month8.push(getfullname(re3.full_name));
+         month8.push((re3.amount/1024).toFixed(2));
+        
+      }else if((re3.month).substring(5)=='09')
+      {
+         month9.push(getfullname(re3.full_name));
+         month9.push((re3.amount/1024).toFixed(2));
+        
+      }else if((re3.month).substring(5)=='10')
+      {
+         month10.push(getfullname(re3.full_name));
+         month10.push((re3.amount/1024).toFixed(2));
+        
+      }else if((re3.month).substring(5)=='11')
+      {
+         month11.push(getfullname(re3.full_name));
+         month11.push((re3.amount/1024).toFixed(2));
+        
+      }else if((re3.month).substring(5)=='12')
+      {
+         month12.push(getfullname(re3.full_name));
+         month12.push((re3.amount/1024).toFixed(2));
+        
+      }
+
+
+  }
+
+}
+
+var monthNames = [ "January", "February", "March", "April", "May", "June",
+    "July", "August", "September", "October", "November", "December" ];
+
+for (var i = 0; i < num; i++) {
+
+  if(i==num-1)
+  {
+    if(months[i].length==0)
+    {
+          print("{x: '"+monthNames[i]+"'}"+'\n');
+    }
+    else
+    {
+      var tempStr="";
+
+      for (var j = 0; j < months[i].length; j=j+2) {
+
+        if(j==months[i].length-2)
+            {
+              tempStr=tempStr+months[i][j]+": "+months[i][j+1];
+            }
+        else
+            {
+                tempStr=tempStr+months[i][j]+": "+months[i][j+1]+", ";
+           }
+      };
+      print("{x: '"+monthNames[i]+"', "+tempStr+"}"+'\n');
+    }
+  }
+  else
+  {
+    if(months[i].length==0)
+    {
+          print("{x: '"+monthNames[i]+"'},"+'\n');
+    }
+    else
+    {
+      var tempStr="";
+
+      for (var j = 0; j < months[i].length; j=j+2) {
+
+        if(j==months[i].length-2)
+            {
+              tempStr=tempStr+months[i][j]+": "+months[i][j+1];
+            }
+        else
+            {
+                tempStr=tempStr+months[i][j]+": "+months[i][j+1]+", ";
+           }
+      };
+      print("{x: '"+monthNames[i]+"', "+tempStr+"},"+'\n');
+    }
+  }
+
+  
+
+
+};
+    // if(week1.length==0)
+    // {
+    //       print("{x: 'Week 1'},"+'\n');
+    // }
+    // else
+    // {
+    //   var tempStr="";
+
+    //   for (var i = 0; i < week1.length; i=i+2) {
+
+    //     if(i==week1.length-2)
+    //         {
+    //           tempStr=tempStr+week1[i]+": "+week1[i+1];
+    //         }
+    //     else
+    //         {
+    //             tempStr=tempStr+week1[i]+": "+week1[i+1]+", ";
+    //        }
+    //   };
+    //   print("{x: 'Week 1', "+tempStr+"},"+'\n');
+    // }
+
+
+    // if(week2.length==0)
+    // {
+    //       print("{x: 'Week 2'},"+'\n');
+    // }
+    // else
+    // {
+    //   var tempStr="";
+
+    //   for (var i = 0; i < week2.length; i=i+2) {
+
+    //     if(i==week2.length-2)
+    //         {
+    //           tempStr=tempStr+week2[i]+": "+week2[i+1];
+    //         }
+    //     else
+    //         {
+    //             tempStr=tempStr+week2[i]+": "+week2[i+1]+", ";
+    //        }
+    //   };
+    //   print("{x: 'Week 2', "+tempStr+"},"+'\n');
+    // }  
+
+    // if(week3.length==0)
+    // {
+    //       print("{x: 'Week 3'},"+'\n');
+    // }
+    // else
+    // {
+    //   var tempStr="";
+
+    //   for (var i = 0; i < week3.length; i=i+2) {
+
+    //     if(i==week3.length-2)
+    //         {
+    //           tempStr=tempStr+week3[i]+": "+week3[i+1];
+    //         }
+    //     else
+    //         {
+    //             tempStr=tempStr+week3[i]+": "+week3[i+1]+", ";
+    //        }
+    //   };
+    //   print("{x: 'Week 3', "+tempStr+"},"+'\n');
+    // }  
+
+
+    // if(week4.length==0)
+    // {
+    //       print("{x: 'Week 4'}");
+    // }
+    // else
+    // {
+    //   var tempStr="";
+
+    //   for (var i = 0; i < week4.length; i=i+2) {
+
+    //     if(i==week4.length-2)
+    //         {
+    //           tempStr=tempStr+week4[i]+": "+week4[i+1];
+    //         }
+    //     else
+    //         {
+    //             tempStr=tempStr+week4[i]+": "+week4[i+1]+", ";
+    //        }
+    //   };
+    //   print("{x: 'Week 4', "+tempStr+"}");
+    // }
+
+
+
+function getfullname(name) {
+ 
+  var str=name.split(" ");
+  var fullname="";
+
+
+  for(var i=0;i<str.length;i++)
+  {
+     if(i==str.length-1)
+     {
+        fullname=fullname+str[i];
+     }
+     else
+     {  
+        fullname=fullname+str[i]+"_";
+     }
+      
+  }
+
+  return fullname;
+}
+
+%>

@@ -1,0 +1,69 @@
+<%
+
+  var log = new Log();
+   var user_name = session.get("username");
+   var role = session.get("role");
+   log.info("^^^^^^^^^^^^^"+role);
+  // if((user_name == null) || (user_role != "admin")){
+
+   // response.status=307;
+  //  response.addHeader('Location','../index.jag');
+
+//   }
+
+ var header = request.getHeader("X-JWT-Assertion");
+var log = new Log();
+// Create Base64 Object
+var Base64 = require('../modules/base64.js');
+
+if(header !=null){
+                  log.info("ssssss==="+header);
+                var jwtAssertions = header.split("."); //JWT header by default contains three '.' separated sections
+                    var jsonString = Base64.decode(jwtAssertions[1]);
+
+                    jsonString = jsonString.replace("http://wso2.org/claims/emailaddress", "email");
+                    jsonString = jsonString.replace("http://wso2.org/claims/role", "roles");
+
+                    var obj = parse(jsonString);
+                    var email = obj.email;
+                    var roles = obj.roles;
+
+                    var username = email.split("@")[0];
+                    log.info("=========usename===="+username);
+                    var url  = "https://localhost:9445/services/LogAnalyzerDataService2/authenticate/admin/"+username;
+
+                    var type = "application/json";
+                    var headers = {"Accept": "application/json"};
+
+                    var result=get(url,"",headers);
+                    var data=result.data;
+
+                    var data=parse(data);
+
+                    var elementArray=data["AdmininfoCollection"];
+                    var re3=elementArray["Admininfo"];
+                                                         
+                            if(re3 != null){
+                            log.info("$$$$$$$$$$$$$$$$$$$-"+username);
+                            session.put("username",username);
+                         //         response.sendRedirect("admin_index.jag");
+   user_name = username;
+   role = "admin";
+
+
+                            }else{
+
+log.info("-------------------"+username);
+                                            session.put("username",username);
+log.info("======qqqqqqqq"+session.get("username"));
+                                        session.put("role", "user");
+                          //              response.sendRedirect("user_portal/home.jag");
+ user_name = username;
+    role = "admin";
+
+                            }
+
+
+}
+
+%>

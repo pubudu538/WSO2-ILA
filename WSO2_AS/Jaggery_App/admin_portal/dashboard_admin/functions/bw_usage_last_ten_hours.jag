@@ -1,0 +1,60 @@
+<%
+
+ var url  = "https://localhost:9445/services/LogAnalyzerDataService/view/totalhourbandwidth";
+                
+ var type = "json";
+ var headers = {"Content-Type": "application/json"};      
+
+ var result=get(url,type,headers);
+ var data=result.data;
+ var data=parse(data);           
+
+
+ var elementArray=data["totalbandwidthCollection"];
+ var re3=elementArray["totalbandwidthhour"];
+
+if(re3 == null)
+{
+             
+     print("[0,0]");   
+
+             
+}
+else
+{
+
+if(re3[0].hour!=0)
+{
+     print("[0, 0],"+'\n');
+
+}
+
+
+   for (var i = 0 ; i < re3.length; i++) {
+    
+
+   if(i==re3.length-1)
+   {
+        
+
+      print("["+re3[i].hour+","+(re3[i].total/(1024*1024)).toFixed(2)+"]");
+         
+     
+   }
+   else
+   {
+
+      print("["+re3[i].hour+","+(re3[i].total/(1024*1024)).toFixed(2)+"],"+'\n');
+       
+     
+   }
+            
+            
+ }
+
+}
+
+
+
+
+%>

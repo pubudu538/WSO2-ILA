@@ -1,0 +1,20 @@
+<%
+
+	 var usrname = request.getParameter("username");
+
+   var url  = "https://localhost:9445/services/LogAnalyzerDataService2/add/admin";  
+
+   var param = '{"_postadd_admin":{"admin_name" : "'+usrname+'"}}';
+
+   var optionalHeaders = {
+        "Accept":"application/json",
+            "Content-Type" : "application/json"};
+
+	post(url, param, optionalHeaders, "json", function (data, xhr) {
+       log("Response received");
+   } );
+
+  print(param);
+
+
+%>

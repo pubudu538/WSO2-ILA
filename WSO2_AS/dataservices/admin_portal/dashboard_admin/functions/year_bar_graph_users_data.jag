@@ -1,0 +1,168 @@
+<%
+
+ var url  = "https://localhost:9445/services/LogAnalyzerDataService/view/yeardataforgraph";
+                
+ var type = "json";
+ var headers = {"Content-Type": "application/json"};      
+
+ var result=get(url,type,headers);
+ var data=result.data;
+ var data=parse(data);           
+
+
+ var elementArray=data["yearbardataCollection"];
+ var re3=elementArray["yearbardata"];
+
+ var year1=new Array();
+ var year2=new Array();
+ var year3=new Array();
+ 
+ var today = new Date();
+
+ var num=parseInt(today.getFullYear()); 
+
+//print(num);
+
+if(re3!=null)
+{    
+
+  if(re3 instanceof Array)
+  {
+
+    for (var i = 0; i <re3.length; i++) {
+
+      if(re3[i].year==num-2)
+      {
+        year1.push(getfullname(re3[i].full_name));
+        year1.push((re3[i].amount/1024).toFixed(2));
+
+      }else if(re3[i].year==num-1)
+      {
+         year2.push(getfullname(re3[i].full_name));
+         year2.push((re3[i].amount/1024).toFixed(2));
+
+      }else if(re3[i].year==num)
+      {
+         year3.push(getfullname(re3[i].full_name));
+         year3.push((re3[i].amount/1024).toFixed(2));
+        
+      }
+
+    };
+      
+  }
+  else
+  {
+   
+      if(re3.year=num-2)
+      {
+        year1.push(getfullname(re3.full_name));
+        year1.push((re3.amount/1024).toFixed(2));
+
+      }else if(re3.year==num-1)
+      {
+         year2.push(getfullname(re3.full_name));
+        year2.push((re3.amount/1024).toFixed(2));
+
+      }else if(re3.year==num)
+      {
+         year3.push(getfullname(re3.full_name));
+         year3.push((re3.amount/1024).toFixed(2)); 
+      }
+
+
+  }
+
+}
+
+    if(year1.length==0)
+    {
+          print("{x: '"+(num-2)+"'},"+'\n');
+    }
+    else
+    {
+      var tempStr="";
+
+      for (var i = 0; i < year1.length; i=i+2) {
+
+        if(i==year1.length-2)
+            {
+              tempStr=tempStr+year1[i]+": "+year1[i+1];
+            }
+        else
+            {
+                tempStr=tempStr+year1[i]+": "+year1[i+1]+", ";
+           }
+      };
+      print("{x: '"+(num-2)+"', "+tempStr+"},"+'\n');
+    }
+
+
+    if(year2.length==0)
+    {
+         print("{x: '"+(num-1)+"'},"+'\n');
+    }
+    else
+    {
+      var tempStr="";
+
+      for (var i = 0; i < year2.length; i=i+2) {
+
+        if(i==year2.length-2)
+            {
+              tempStr=tempStr+year2[i]+": "+year2[i+1];
+            }
+        else
+            {
+                tempStr=tempStr+year2[i]+": "+year2[i+1]+", ";
+           }
+      };
+      print("{x: '"+(num-1)+"', "+tempStr+"},"+'\n');
+    }  
+
+    if(year3.length==0)
+    {
+           print("{x: '"+(num)+"'},"+'\n');
+    }
+    else
+    {
+      var tempStr="";
+
+      for (var i = 0; i < year3.length; i=i+2) {
+
+        if(i==year3.length-2)
+            {
+              tempStr=tempStr+year3[i]+": "+year3[i+1];
+            }
+        else
+            {
+                tempStr=tempStr+year3[i]+": "+year3[i+1]+", ";
+           }
+      };
+       print("{x: '"+(num)+"', "+tempStr+"},"+'\n');
+    }  
+
+
+function getfullname(name) {
+ 
+  var str=name.split(" ");
+  var fullname="";
+
+
+  for(var i=0;i<str.length;i++)
+  {
+     if(i==str.length-1)
+     {
+        fullname=fullname+str[i];
+     }
+     else
+     {  
+        fullname=fullname+str[i]+"_";
+     }
+      
+  }
+
+  return fullname;
+}
+
+%>

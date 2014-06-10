@@ -1,0 +1,45 @@
+<%
+	
+	 var url  = "https://localhost:9445/services/LogAnalyzerDataServiceforUsers/view/currentbwforuser/"+user_name;  
+    var type = "application/json";
+    var headers = {"Accept": "application/json"};
+
+    var result=get(url,"",headers);
+    var data=result.data;
+    var data=parse(data);
+
+    var elementArray=data["currentbwuserCollection"];
+    var re3=elementArray["currentbwuser"];
+
+
+if(isNaN(re3.total)==true)
+{
+             
+     print(10);   
+             
+}
+else
+{
+  var value = parseInt(Math.round(re3.total/(1024)));
+  var max=0;
+
+    if(value<10)
+    {
+      max=10;
+    }else if(value<100)
+    {
+      max=100;
+    }else if(value<500)
+    {
+      max=500;
+    }else
+    {
+      max=value+500;
+    }
+
+    print(max);
+}
+
+
+
+%>

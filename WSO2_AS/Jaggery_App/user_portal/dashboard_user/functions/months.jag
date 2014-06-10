@@ -1,0 +1,28 @@
+ = [ "January", "February", "March", "April", "May", "June","July", "August", "September", "October", "November", "December" ];
+  
+
+   var today = new Date();
+
+   var num=parseInt(today.getMonth()+1);
+
+   var str="";
+
+   for(var i=0;i<num;i++)
+   {
+
+   		 if(i==num-1)
+   {
+       str=str+"'"+monthNames[i]+"'";
+   }
+   else
+   {
+   		str=str+"'"+monthNames[i]+"',";
+
+   }
+   		
+   }
+
+   print(str);
+
+
+%>

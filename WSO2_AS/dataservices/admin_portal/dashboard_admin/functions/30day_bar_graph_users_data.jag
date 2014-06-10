@@ -1,0 +1,231 @@
+<%
+
+ var url  = "https://localhost:9445/services/LogAnalyzerDataService/view/weekdataforgraph";
+                
+ var type = "json";
+ var headers = {"Content-Type": "application/json"};      
+
+ var result=get(url,type,headers);
+ var data=result.data;
+ var data=parse(data);           
+
+
+ var elementArray=data["weekbardataCollection"];
+ var re3=elementArray["weekbardata"];
+
+ var week1=new Array();
+ var week2=new Array();
+ var week3=new Array();
+ var week4=new Array();
+ var today = new Date();
+
+ var num=parseInt(getWeekNumber(today));
+
+function getWeekNumber(date) {
+  var addDays = 0, dayOfWeek = date.getDay(), 
+    modifiedDate = new Date(date);
+  // move to Thursday in same week as date
+  if (dayOfWeek == 0) {
+    addDays = -3;
+  }
+  else {
+    addDays = 4 - dayOfWeek;
+  }
+  modifiedDate.setDate(modifiedDate.getDate() + addDays);
+   
+  // count weeks going back in time one week at a time
+  // until we reach previous year
+  var year = modifiedDate.getFullYear(), weekCount = 0;
+  do {
+    modifiedDate.setDate(modifiedDate.getDate() - 7);
+    weekCount++;
+  } while (modifiedDate.getFullYear() == year);
+  return weekCount;
+}
+
+
+
+
+if(re3!=null)
+{
+    
+
+  if(re3 instanceof Array)
+  {
+
+    for (var i = 0; i <re3.length; i++) {
+
+      if(re3[i].week==num-4)
+      {
+        week1.push(getfullname(re3[i].full_name));
+        week1.push((re3[i].amount/1024).toFixed(2));
+
+      }else if(re3[i].week==num-3)
+      {
+         week2.push(getfullname(re3[i].full_name));
+        week2.push((re3[i].amount/1024).toFixed(2));
+
+      }else if(re3[i].week==num-2)
+      {
+         week3.push(getfullname(re3[i].full_name));
+        week3.push((re3[i].amount/1024).toFixed(2));
+        
+      }else if(re3[i].week==num-1)
+      {
+         week4.push(getfullname(re3[i].full_name));
+        week4.push((re3[i].amount/1024).toFixed(2));
+        
+      }
+
+
+    };
+
+
+      
+  }
+  else
+  {
+
+   
+      if(re3.week==num-4)
+      {
+        week1.push(getfullname(re3.full_name));
+        week1.push((re3.amount/1024).toFixed(2));
+
+      }else if(re3.week==num-3)
+      {
+         week2.push(getfullname(re3.full_name));
+        week2.push((re3.amount/1024).toFixed(2));
+
+      }else if(re3.week==num-2)
+      {
+         week3.push(getfullname(re3.full_name));
+        week3.push((re3.amount/1024).toFixed(2));
+        
+      }else if(re3.week==num-1)
+      {
+         week4.push(getfullname(re3.full_name));
+        week4.push((re3.amount/1024).toFixed(2));
+        
+      }
+
+
+  }
+
+}
+
+    if(week1.length==0)
+    {
+          print("{x: 'Week 1'},"+'\n');
+    }
+    else
+    {
+      var tempStr="";
+
+      for (var i = 0; i < week1.length; i=i+2) {
+
+        if(i==week1.length-2)
+            {
+              tempStr=tempStr+week1[i]+": "+week1[i+1];
+            }
+        else
+            {
+                tempStr=tempStr+week1[i]+": "+week1[i+1]+", ";
+           }
+      };
+      print("{x: 'Week 1', "+tempStr+"},"+'\n');
+    }
+
+
+    if(week2.length==0)
+    {
+          print("{x: 'Week 2'},"+'\n');
+    }
+    else
+    {
+      var tempStr="";
+
+      for (var i = 0; i < week2.length; i=i+2) {
+
+        if(i==week2.length-2)
+            {
+              tempStr=tempStr+week2[i]+": "+week2[i+1];
+            }
+        else
+            {
+                tempStr=tempStr+week2[i]+": "+week2[i+1]+", ";
+           }
+      };
+      print("{x: 'Week 2', "+tempStr+"},"+'\n');
+    }  
+
+    if(week3.length==0)
+    {
+          print("{x: 'Week 3'},"+'\n');
+    }
+    else
+    {
+      var tempStr="";
+
+      for (var i = 0; i < week3.length; i=i+2) {
+
+        if(i==week3.length-2)
+            {
+              tempStr=tempStr+week3[i]+": "+week3[i+1];
+            }
+        else
+            {
+                tempStr=tempStr+week3[i]+": "+week3[i+1]+", ";
+           }
+      };
+      print("{x: 'Week 3', "+tempStr+"},"+'\n');
+    }  
+
+
+    if(week4.length==0)
+    {
+          print("{x: 'Week 4'}");
+    }
+    else
+    {
+      var tempStr="";
+
+      for (var i = 0; i < week4.length; i=i+2) {
+
+        if(i==week4.length-2)
+            {
+              tempStr=tempStr+week4[i]+": "+week4[i+1];
+            }
+        else
+            {
+                tempStr=tempStr+week4[i]+": "+week4[i+1]+", ";
+           }
+      };
+      print("{x: 'Week 4', "+tempStr+"}");
+    }
+
+
+
+function getfullname(name) {
+ 
+  var str=name.split(" ");
+  var fullname="";
+
+
+  for(var i=0;i<str.length;i++)
+  {
+     if(i==str.length-1)
+     {
+        fullname=fullname+str[i];
+     }
+     else
+     {  
+        fullname=fullname+str[i]+"_";
+     }
+      
+  }
+
+  return fullname;
+}
+
+%>

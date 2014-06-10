@@ -1,0 +1,20 @@
+<%
+
+  	 var description = request.getParameter("description");
+  	 var site_ip = request.getParameter("siteip");
+
+     var url  = "https://localhost:9445/services/LogAnalyzerDataService/add/bandipdetails/";  
+                         
+     var param = '{"_postadd_bandipdetails":{"ip_address" : "'+site_ip+'","description" : "'+description+'"}}';
+
+
+     var optionalHeaders = {
+        "Accept":"application/json",
+            "Content-Type" : "application/json"};
+
+  	 post(url, param, optionalHeaders, "json", function (data, xhr) {
+         log("Response received");
+     } );
+
+
+%>

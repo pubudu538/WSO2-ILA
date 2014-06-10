@@ -1,0 +1,19 @@
+<% 
+
+		        var asAdmin = request.getParameter("asAdmin");
+
+			    if(asAdmin == "logasadmin"){
+
+			    session.put("role", "admin");
+
+			    response.sendRedirect("../home.jag");
+
+			    }else{
+
+			    	response.sendRedirect("../../user_portal/home.jag");
+
+			    }
+
+
+
+%>

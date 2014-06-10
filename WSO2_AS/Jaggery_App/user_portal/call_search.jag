@@ -1,0 +1,1084 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!-- saved from url=(0064)https://10.100.4.37:9443/carbon/admin/index.jsp?loginStatus=true -->
+<html xmlns="http://www.w3.org/1999/xhtml">
+    
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<title>WSO2 Management Console</title>
+
+<link href="css/global.css" rel="stylesheet" type="text/css" media="all">
+
+<link href="images/registry_styles_ajaxprocessor.jsp" rel="stylesheet" type="text/css" media="all">
+<link href="css/main.css" rel="stylesheet" type="text/css" media="all">
+<link href="css/jqueryui-themeroller.css" rel="stylesheet" type="text/css" media="all">
+<link href="css/dialog.css" rel="stylesheet" type="text/css" media="all">
+<link rel="stylesheet" href="css/carbonFormStyles.css">
+<link rel="icon" href="images/favicon.ico" type="image/x-icon">
+<link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon">
+<script type="text/javascript" src="js/jquery-1.5.2.min.js"></script>
+<script type="text/javascript" src="js/jquery.form.js"></script>
+<script type="text/javascript" src="js/jquery-ui.min.js"></script>
+<script type="text/javascript" src="js/jquery.validate.js"></script>    
+<script type="text/javascript" src="js/jquery.cookie.js"></script>
+<script type="text/javascript" src="js/jquery.ui.core.min.js"></script>
+<script type="text/javascript" src="js/jquery.ui.widget.min.js"></script>
+<script type="text/javascript" src="js/jquery.ui.tabs.min.js"></script>
+<script type="text/javascript" src="js/main.js"></script>
+<script type="text/javascript" src="js/WSRequest.js"></script>
+<script type="text/javascript" src="js/cookies.js"></script>
+
+<style type="text/css" title="currentStyle">
+            @import "media/css/demo_page.css";
+            @import "media/css/demo_table.css";
+            @import "media/css/TableTools.css";
+        </style>
+        <script type="text/javascript" charset="utf-8" src="media/js/jquery.js"></script>
+        <script type="text/javascript" charset="utf-8" src="media/js/jquery.dataTables.js"></script>
+        <script type="text/javascript" charset="utf-8" src="media/js/ZeroClipboard.js"></script>
+        <script type="text/javascript" charset="utf-8" src="media/js/TableTools.js"></script>
+
+<script type="text/javascript" src="js/customControls.js"></script>
+
+<!-- Bootstrap -->
+<link rel="stylesheet" href="date_time/css/bootstrap.css">
+<!-- timepicker -->
+<link rel="stylesheet" href="date_time/css/plugins/timepicker/bootstrap-timepicker.min.css">
+<!-- Datepicker -->
+<link rel="stylesheet" href="date_time/css/plugins/datepicker/datepicker.css">
+<!-- Theme CSS -->
+<link rel="stylesheet" href="date_time/css/style.css">
+<!-- Bootstrap -->
+<script src="date_time/js/bootstrap.js"></script>
+<!-- Datepicker -->
+<script src="date_time/js/plugins/datepicker/bootstrap-datepicker.js"></script>
+<!-- Timepicker -->
+<script src="date_time/js/plugins/timepicker/bootstrap-timepicker.min.js"></script>
+<!-- Theme framework -->
+<script src="date_time/js/eakroko.js"></script>
+
+<script>
+
+                var ggh = jQuery.noConflict();
+
+                var oTable = "";
+                            
+                function createTable(){
+
+
+                    var searchBoxValue = document.getElementById("toolboxSearchString").value;
+
+                    var option_value1 = document.getElementById("category_select");
+                    var option_select_string = option_value1.options[option_value1.selectedIndex].text;
+
+                    var option_value2 = document.getElementById("time_category_select");
+                    var option_select_strin2 = option_value2.options[option_value2.selectedIndex].text;
+
+                    var option_value3 = document.getElementById("time_category_sub_select");
+                    var option_select_strin3 =null;
+                    if(option_value3.options[option_value3.selectedIndex]!=null){
+                            option_select_strin3 = option_value3.options[option_value3.selectedIndex].text;
+                    }
+
+                    alert("Var 1 :"+option_select_string+" Var 2 :"+option_select_strin2+" Var 3 :"+option_select_strin3+"Var 4:"+searchBoxValue);
+
+                    if(option_select_string=="User Name"){
+
+
+                        document.getElementById("user_header").style.display = "";                
+                        document.getElementById("site_table").style.display = "";
+                        document.getElementById("site_header").style.display = "none";                
+                        document.getElementById("ip_header").style.display = "none";
+                        document.getElementById("headerTable").style.display = "";
+
+                       // alert(option_select_string);
+
+                            // oTable =  ggh('#example').dataTable( {
+                            //         "sPaginationType": "full_numbers",
+                            //         "bProcessing": true,
+                            //         "bRetrieve": true,
+                            //         "bDestroy": true,
+                            //         "sAjaxSource": "functions/current_topsites.jag"
+                            // } );
+
+                    }else if(option_select_string=="Destination Number"){
+
+
+                        document.getElementById("site_table").style.display = "";
+                        document.getElementById("site_header").style.display = "";
+                        document.getElementById("user_header").style.display = "none";                
+                        document.getElementById("ip_header").style.display = "none";
+                        document.getElementById("headerTable").style.display = "";
+
+                       // alert(option_select_string);
+                          
+                           // oTable.fnDestroy();
+                            
+                           //     oTable =  ggh('#example').dataTable( {
+                           //              "sPaginationType": "full_numbers",
+                           //              "bProcessing": true,
+                           //              "bRetrieve": true,
+                           //              "bDestroy": true,
+                           //              "sAjaxSource": "functions/daily_topsites.jag"
+                           //      } );
+
+                    }else if(option_select_string=="Destination IP"){
+
+                        document.getElementById("ip_header").style.display = "";
+                        document.getElementById("user_header").style.display = "none";                
+                        document.getElementById("site_table").style.display = "";
+                        document.getElementById("site_header").style.display = "none";
+                        document.getElementById("headerTable").style.display = "";
+
+                        //alert(option_select_string);
+                          
+                           // oTable.fnDestroy();
+
+                           //     oTable =  ggh('#example').dataTable( {
+                           //              "sPaginationType": "full_numbers",
+                           //              "bProcessing": true,
+                           //              "bRetrieve": true,
+                           //              "bDestroy": true,
+                           //              "sAjaxSource": "functions/monthly_topsites.jag"
+                           //      } );             
+
+                    }else{
+
+                        //alert("Done");
+
+                        document.getElementById("user_header").style.display = "none";                
+                        document.getElementById("site_table").style.display = "none";
+                        document.getElementById("site_header").style.display = "none";                               
+                        document.getElementById("ip_header").style.display = "none";
+                        document.getElementById("headerTable").style.display = "none";
+
+                    }
+                };
+
+    function getOptionValue() {
+
+            var option_value = document.getElementById("category_select");
+            var option_string = option_value.options[option_value.selectedIndex].text;
+            document.getElementById("change_text").innerHTML = option_string;
+            if (option_string == "User Name"){
+                document.getElementById("change_text").innerHTML = option_string;
+                document.getElementById("time_category_table").style.display = "";
+
+                document.getElementById("table_header2").innerHTML = "User Name";            
+
+            }else if(option_string == "Destination Number"){
+                document.getElementById("change_text").innerHTML = option_string;
+                document.getElementById("time_category_table").style.display = "";  
+
+                document.getElementById("table_header2").innerHTML = "Destination Number";
+
+            }else if(option_string == "Destination IP"){
+                document.getElementById("change_text").innerHTML = option_string;
+                document.getElementById("time_category_table").style.display = "";
+
+                document.getElementById("table_header2").innerHTML = "Destination IP";
+
+            }else{
+                document.getElementById("change_text").innerHTML = ""; 
+                document.getElementById("time_category_table").style.display = "none";
+                document.getElementById("table_search").style.display = "none";
+
+            }
+        };
+
+        function getTimeOptionValue(){
+
+            var time_option_value = document.getElementById("time_category_select");
+            var time_option_string = time_option_value.options[time_option_value.selectedIndex].text;
+            if (time_option_string == "Current"){
+                document.getElementById("pastData").style.display = "none";
+                document.getElementById("table_header3").style.display = "";                                
+                document.getElementById("table_search").style.display = "";
+            }else if(time_option_string == "Hour"){    
+                //select.options.length = 0;            
+                document.getElementById("pastData").style.display = "";
+                document.getElementById("table_header3").style.display = "";                                
+                document.getElementById("table_search").style.display = "";
+                $('#time_category_sub_select')
+                    .find('option')
+                    .remove()
+                    .end()
+                    .append('<option value="1">1 Hour</option>')
+                    .append('<option value="2">3 Hour</option>')
+                    .append('<option value="3">6 Hour</option>')
+                    .append('<option value="4">12 Hour</option>')
+                    .append('<option value="5">24 Hour</option>')
+                ;
+            }else if(time_option_string == "Day"){
+                document.getElementById("pastData").style.display = "";                                  
+                document.getElementById("table_search").style.display = "";             
+                document.getElementById("table_header3").style.display = "none";
+                $('#time_category_sub_select')
+                    .find('option')
+                    .remove()
+                    .end()
+                    .append('<option value="1">1 Day</option>')
+                    .append('<option value="2">5 Days</option>')
+                    .append('<option value="3">10 Days</option>')
+                    .append('<option value="4">15 Days</option>')
+                    .append('<option value="5">20 days</option>')
+                    .append('<option value="6">25 days</option>')
+                    .append('<option value="7">30 days</option>')
+                ;
+            }else if(time_option_string == "Month"){
+                document.getElementById("pastData").style.display = "";
+                document.getElementById("table_header3").style.display = "";                                
+                document.getElementById("table_search").style.display = "";
+                $('#time_category_sub_select')
+                    .find('option')
+                    .remove()
+                    .end()
+                    .append('<option value="1">1 Month</option>')
+                    .append('<option value="2">3 Months</option>')
+                    .append('<option value="3">6 Months</option>')
+                    .append('<option value="4">12 Months</option>')
+                ;
+            }else if(time_option_string == "Year"){  
+                document.getElementById("pastData").style.display = "";
+                document.getElementById("table_header3").style.display = "";
+                $('#time_category_sub_select')
+                    .find('option')
+                    .remove()
+                    .end()
+                    .append('<option value="1">1 Year</option>')
+                    .append('<option value="2">2 Years</option>')
+                    .append('<option value="3">3 Years</option>')
+                ;           
+            }else{
+                document.getElementById("pastData").style.display = "none";
+                document.getElementById("table_search").style.display = "none";
+            }
+
+
+        };
+    
+</script>
+
+<script type="text/javascript">
+        var tableToExcel = (function() {
+          var uri = 'data:application/vnd.ms-excel;base64,'
+            , template = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>{worksheet}</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--></head><body><table>{table}</table></body></html>'
+            , base64 = function(s) { return window.btoa(unescape(encodeURIComponent(s))) }
+            , format = function(s, c) { return s.replace(/{(\w+)}/g, function(m, p) { return c[p]; }) }
+          return function(table, name) {
+            if (!table.nodeType) table = document.getElementById(table)
+            var ctx = {worksheet: name || 'Worksheet', table: table.innerHTML}
+            window.location.href = uri + base64(format(template, ctx))
+          }
+        })()
+ </script>
+
+<link rel="stylesheet" href="popup/css/jquery.ui.all.css">
+<script src="popup/js/jquery-1.9.1.js"></script>
+<script src="js/jquery.ui.core.js"></script>
+<script src="js/jquery.ui.widget.js"></script>
+<script src="js/jquery.ui.mouse.js"></script>
+<script src="js/jquery.ui.button.js"></script>
+<script src="js/jquery.ui.draggable.js"></script>
+<script src="js/jquery.ui.position.js"></script>
+<script src="js/jquery.ui.resizable.js"></script>
+<script src="js/jquery.ui.button.js"></script>
+<script src="js/jquery.ui.dialog.js"></script>
+<script src="js/jquery.ui.effect.js"></script>  
+
+<link rel="stylesheet" href="popup/css/demos.css">
+
+<style>
+    div#users-contain { width: 350px; margin: 20px 0; }
+    div#users-contain table { margin: 1em 0; border-collapse: collapse; width: 100%; }
+    div#users-contain table td, div#users-contain table th { border: 1px solid #eee; padding: .6em 10px; text-align: left; }
+    .ui-dialog .ui-state-error { padding: .3em; }
+    .validateTips { border: 1px solid transparent; padding: 0.3em; }
+</style>
+
+<!-- This script handles the tabbed pane functionality -->
+<script>
+        var tt = jQuery.noConflict();
+        tt(function() {
+
+        var name = tt("#name"),
+        email = tt("#email"),
+        password = tt("#password"),
+        allFields = tt([]).add(name).add(email).add(password),
+        tips = tt(".validateTips");
+        
+        tt("#dialog-form").dialog({
+                autoOpen: false,
+                height: 500,
+                width: 950,
+                modal: true,
+                buttons: {
+                    "Generate Report": function() {
+                    tableToExcel('exportTable', 'W3C Example Table');
+                    },
+                    Cancel: function() {
+                    tt(this).dialog("close");
+                    }
+                },
+                close: function() {
+                    allFields.val("").removeClass("ui-state-error");
+                }
+            });
+            tt("#generate_reprot")
+            .button()
+            .click(function() {
+            tt("#dialog-form").dialog("open");
+            });
+        });                                                                    
+</script>
+
+
+
+</head>
+
+<body>
+    <noscript>
+    &lt;div class="something-wrong"&gt;
+    &lt;div class="title"&gt;JavaScript is disabled on your browser&lt;/div&gt;
+    &lt;div class="content"&gt;Please enable JavaScript or upgrade to a JavaScript-capable browser to use WSO2 Products.&lt;/div&gt;
+    &lt;/div&gt;
+    </noscript>
+
+<div id="dcontainer"></div>
+<script type="text/javascript" src="js/dialog.js"></script>
+
+<!-- JS imports for collapsible menu -->
+<script src="js/yahoo-dom-event.js" type="text/javascript"></script>
+<script src="js/animation-min.js" type="text/javascript"></script>
+<script src="js/template.js" type="text/javascript"></script>
+<script src="js/yahoo-min.js" type="text/javascript"></script>
+<script src="js/selector-min.js" type="text/javascript"></script>
+
+<table id="main-table" border="0" cellspacing="0">
+    <tbody>
+        <tr>
+            <td id="header" colspan="3">
+
+            <div id="header-div">
+                <div class="right-logo">Management Console</div>
+                <div class="middle-ad">
+
+                </div>
+                <div class="header-links">
+                    <div class="right-links">         
+                            <ul>
+                                <li class="middle">
+                                <label id="logged-user">
+                                <strong>Signed-in as:</strong>&nbsp;admin@carbon.super
+                                </label>
+                                </li>
+                                <li class="middle">|</li>
+                                <li class="right">
+                                <a href="#">Sign-out</a>
+                                </li>
+
+                                <li class="middle">|</li>
+                                <li class="middle">
+                                <a target="_blank" href="#">Docs</a>
+                                </li>
+                                <li class="middle">|</li>
+
+                                <li class="left">
+                                <a target="_blank" href="#">About</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </td>
+        </tr>
+        
+    <tr>
+        <td class="vertical-menu-container" id="vertical-menu-container" style="">
+            <div id="menu-panel-button0" class="showToHidden"></div>
+            <div id="menu-panel-button1" class="menu-panel-buttons selected"><span>Main</span></div>
+            <div id="menu-panel-button2" class="menu-panel-buttons"><span>User</span></div>
+            <div id="menu-panel-button3" class="menu-panel-buttons"><span>Configure</span></div>
+            <div id="menu-panel-button4" class="menu-panel-buttons"><span>Tools</span></div>
+            <div id="menu-panel-button5" class="menu-panel-buttons" style="display: none;"><span>Extensions</span></div>
+            <div id="menu-panel-button_dummy" style="display:none"></div>
+        </td>
+        <td id="menu-panel" valign="top">
+            <table id="menu-table" border="0" cellspacing="0">
+            <tbody>
+                <tr>
+                    <td id="region1">
+                        <div id="menu"> 
+                            <ul class="main">
+                                <li><a href="home.jag" class="menu-home">Home</a></li>
+                                <li id="region1_dashboard_main_menu" class="menu-header"  onclick="mainMenuCollapse(this.childNodes[0])" style="cursor:pointer"><img src="images/up-arrow.gif" class="mMenuHeaders" id="region1_dashboard_main_menu"/>Sites</li>
+                                <li class="normal">
+                                    <ul class="sub">
+                                        <li><a href="site_search.jag" class="menu-default" style="background-image: url(images/search-top.png);">Search</a></li>
+                                        <li><a href="top_bw_consumption.jag" class="menu-default" style="background-image: url(images/analyzerFramework.png);">Top BW Consumption</a></li>
+                                    </ul>
+                                </li>
+
+                                <li id="region1_manage_gs" class="menu-header"  onclick="mainMenuCollapse(this.childNodes[0])" style="cursor:pointer"><img src="images/up-arrow.gif" class="mMenuHeaders" id="region1_manage_gs"/>Calls</li>
+
+                                <li class="normal">
+                                    <ul class="sub">
+                                        <li><a href="top_call_destinations.jag" class="menu-default" style="background-image: url(images/gadgetRepo.gif);">Top Destinations</a></li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </div>
+                    </td>
+                 </tr>
+                 <tr>
+                    <td id="region2">
+                        <div id="menu"> <ul class="main"> </ul></div>
+                    </td>
+                 </tr>
+                 <tr>
+                    <td id="region3"></td>
+                 </tr>
+            <tr>
+                        <td id="region5">
+                            <div id="menu"> 
+                                <ul class="main">
+                                        <li id="region5_tools_menu" class="menu-header" onclick="mainMenuCollapse(this.childNodes[0])" style="cursor: pointer; display: none;"><img src="./WSO2 Management Console_files/up-arrow.gif" class="mMenuHeaders" id="region5_tools_menu">Dashboard</li>
+                                        <li class="normal" style="display: none;">
+                                        <ul class="sub">
+                                            <li><a href="dashboard_user/user_dashboard.jag" class="menu-default" style="background-image: url(images/chart_bar.gif);">Dashboard</a></li>
+                                        </ul>
+                                </li></ul>
+                            </div>
+                        </td>
+                    </tr>
+            <tr>
+                <td><img src="images/1px.gif" width="225px" height="1px"></td>
+            </tr>
+            </tbody></table>
+        </td>
+        <td id="middle-content">
+            <table id="content-table" border="0" cellspacing="0">
+                <tbody>
+                    <tr>
+                        <td id="page-header-links">
+                            <table class="page-header-links-table" cellspacing="0">
+                                <tbody>
+                                    <tr>
+                                        <td class="breadcrumbs">
+                                            <table class="breadcrumb-table" cellspacing="0">
+                                                <tbody>
+                                                    <tr>                                 
+                                                        <td>
+                                                            <div id="breadcrumb-div"></div>
+                                                        </td>
+                                                    </tr>
+
+                                                </tbody>
+                                            </table>
+                                        </td>
+
+                                        <td class="page-header-help"><a href="#" target="_blank">Help</a></td>
+                                       </tr>
+                                </tbody>
+                            </table>
+                        </td>
+                    </tr>
+        <tr>
+            <td id="body">
+                 <img src="images/1px.gif" width="735px" height="1px"/>
+
+            <script type="text/javascript">
+                var msgId;
+                msgId = 'MSG13891711928680.4057310190033303'; 
+            </script>
+
+    <div id="middle">
+
+            <h2>
+            Call Search
+            </h2>
+
+            <p>&nbsp;</p>
+
+        <div id="workArea">
+            <div id="systemInfoDiv">
+
+                <div id="result"><!--
+                ~ Copyright (c) 2005-2014, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+                ~
+                ~ WSO2 Inc. licenses this file to you under the Apache License,
+                ~ Version 2.0 (the "License"); you may not use this file except
+                ~ in compliance with the License.
+                ~ You may obtain a copy of the License at
+                ~
+                ~    http://www.apache.org/licenses/LICENSE-2.0
+                ~
+                ~ Unless required by applicable law or agreed to in writing,
+                ~ software distributed under the License is distributed on an
+                ~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+                ~ KIND, either express or implied.  See the License for the
+                ~ specific language governing permissions and limitations
+                ~ under the License.
+                -->
+                    <div id="middle" style="width: 1050px;" id="middle">
+
+                        <div id="workArea">
+                            <form action="listbar.jsp" name="searchForm">
+                                <table class="styledLeft">
+                                    <tbody>
+                                        <tr>
+                                            <td>
+                                                <table style="border:0 !important; ">
+                                                    <tbody>
+                                                        <tr style="border:0 !important; ">
+                                                            <td style="border:0 !important; ">
+                                                                <nobr>
+                                                                    Search Category &nbsp;&nbsp;&nbsp;: &nbsp;
+                                                                    <select name="toolType" id="category_select" onchange="getOptionValue();">
+                                                                        <option value="-1" selected="selected">-- Select a Category --</option>
+                                                                        <option value="1">User Name</option>
+                                                                        <option value="2">Destination IP</option>
+                                                                        <option value="3">Destination Number</option>
+                                                                    </select>                                
+                                                                </nobr>
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+
+                                <table id="time_category_table" style="display:none; margin-top:10px;" class="styledLeft" >
+                                    <tbody>
+                                        <tr>
+                                            <td>
+                                                <table style="border:0 !important ; ">
+                                                    <tbody>
+                                                        <tr style="border:0 !important; ">
+
+                                                             <td style="border:0 !important; ">
+                                                                <nobr>
+                                                                    Time Category  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: &nbsp;
+                                                                    <select name="toolType" id="time_category_select" onchange="getTimeOptionValue();">
+                                                                        <option value="-1" selected="selected">-- Select a Value --</option>
+                                                                        <option value="1">Current</option>
+                                                                        <option value="2">Hour</option>
+                                                                        <option value="3">Day</option>
+                                                                        <option value="4">Month</option>
+                                                                        <option value="5">Year</option>
+                                                                    </select>                                
+                                                                </nobr>
+                                                            </td>
+
+
+                                                            <td style="display:none; border:0 !important;" id="pastData">
+                                                                <nobr>
+                                                                    Get Data of Past &nbsp;&nbsp;&nbsp;: &nbsp;
+                                                                    <select name="toolType" id="time_category_sub_select" onchange="getTimeOptionValue2();">
+                                                                        <!-- <option value="-1" selected="selected">
+                                                                            -- Select a Category --
+                                                                        </option>
+                                                                        <option value="1">
+                                                                            Current
+                                                                        </option>
+                                                                        <option value="2">
+                                                                            Hour
+                                                                        </option>
+                                                                        <option value="3">
+                                                                            Day
+                                                                        </option>
+                                                                        <option value="4">
+                                                                            Month
+                                                                        </option>
+                                                                        <option value="5">
+                                                                            Year
+                                                                        </option> -->
+                                                                    </select>                                
+                                                                </nobr>
+                                                            </td>
+
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+
+                                <table id="table_search" style="display:none; margin-top:10px;" class="styledLeft" >
+                                    <tbody>
+                                        <tr>
+                                            <td>
+                                                <table style="border:0  !important;">
+                                                    <tbody>
+                                                        <tr style="border:0  !important;">
+                                                            <td style="width:106px; border:0 !important; ">
+                                                                <bdi id="change_text" >Destination</bdi>
+                                                            </td>
+
+                                                            <td style="border:0 !important; ">
+                                                                <nobr> &nbsp;  :
+                                                                    &nbsp;&nbsp;<input type="text" name="toolboxSearchString" id="toolboxSearchString" value="">&nbsp;
+                                                                </nobr>
+                                                            </td>
+                                                            <td style="border:0  !important;">
+                                                                <input type="button" class="button" onclick="createTable();" value="Search">
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+
+
+                                <table id="headerTable" style="display:none; margin-top:10px;" class="styledLeft" >
+                                    <tbody>
+                                        <tr style="background: #ECECEC;">
+                                            <td>
+                                                <table style="border:0 !important; ">
+                                                    <tbody>                                                        
+                                                        <tr style="display:none;" id="user_header" style="border:0 !important; ">
+                                                            <td style="border:0 !important; ">
+                                                                <h3>Chamika Kasun</h3>
+                                                                Total Hits : 3500 &nbsp;&nbsp; | Total Bandwidth  : 8.78kbps &nbsp;&nbsp;
+                                                            </td>
+                                                        </tr>
+                                                        <tr style="display:none;" id="ip_header" style="border:0 !important; ">
+                                                            <td style="border:0 !important; ">
+                                                                <h3>100.10.10.1</h3>
+                                                                Total Hits : 3500 &nbsp;&nbsp; | Total Bandwidth  : 8.78kbps &nbsp;&nbsp;
+                                                            </td>
+                                                        </tr>
+                                                        <tr style="display:none;" id="site_header" style="border:0 !important; ">
+                                                            <td style="border:0 !important; ">
+                                                                <h3>Google</h3>
+                                                                Total Hits : 3500 &nbsp;&nbsp; | Total Bandwidth  : 8.78kbps &nbsp;&nbsp;
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </td>
+                                        </tr>
+
+
+                                        <tr style="background: #ECECEC;">
+                                            <td style="display:none;" id="site_table" class="formRow">
+
+                                                <div id="container">
+                                                    <div id="demo">
+                                                        <table cellpadding="0" cellspacing="0" border="0" class="display" id="example">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th>ID</th>
+                                                                    <th id="table_header2"></th>                                                               
+                                                                    <th >Date</th>
+                                                                    <th style="display:none;" id="table_header3">Hour</th>
+                                                                    <th>Bandwidth</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
+
+                                            </td>
+
+                                            <td style="display:none;" class="formRow">
+                                                <div id="dialog-form" title="Generate a Report">
+                                                    <div id="container">
+                                                        <div id="demo">
+                                                            <div id="scrollable">
+                                                                <table cellpadding="0" cellspacing="0" border="0" class="display" id="exportTable">
+                                                                    <thead>
+                                                                        <tr>
+                                                                            <th>ID</th>
+                                                                            <th>Destination</th>
+                                                                            <th>Date</th>
+                                                                            <th>Time</th>
+                                                                            <th>Duration</th>
+                                                                        </tr>
+                                                                    </thead>
+                                                                    <tbody>
+                                                                        <tr>
+                                                                            <td>1</td>
+                                                                            <td>071 529 5000</td>
+                                                                            <td>03-07-2013</td>
+                                                                            <td>8:30 P.M</td>
+                                                                            <td>10hrs 30mins 2secs</td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td>2</td>
+                                                                            <td>077 529 5000</td>
+                                                                            <td>09-09-2011</td>
+                                                                            <td>9:30 P.M</td>
+                                                                            <td>0hrs 30mins 2secs</td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td>3</td>
+                                                                            <td>071 277 6598</td>
+                                                                            <td>03-07-2012</td>
+                                                                            <td>8:30 A.M</td>
+                                                                            <td>1hrs 30mins 2secs</td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td>4</td>
+                                                                            <td>071 897 5869</td>
+                                                                            <td>03-06-2011</td>
+                                                                            <td>12:30 A.M</td>
+                                                                            <td>0hrs 45mins 2secs</td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td>5</td>
+                                                                            <td>071 277 6598</td>
+                                                                            <td>03-07-2013</td>
+                                                                            <td>12:30 P.M</td>
+                                                                            <td>1hrs 30mins 12secs</td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td>6</td>
+                                                                            <td>011 896 5674</td>
+                                                                            <td>03-07-2013</td>
+                                                                            <td>8:30 P.M</td>
+                                                                            <td>10hrs 30mins 2secs</td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td>7</td>
+                                                                            <td>041 225 5632</td>
+                                                                            <td>09-09-2011</td>
+                                                                            <td>9:30 P.M</td>
+                                                                            <td>0hrs 30mins 2secs</td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td>8</td>
+                                                                            <td>011 896 5674</td>
+                                                                            <td>03-07-2012</td>
+                                                                            <td>8:30 A.M</td>
+                                                                            <td>1hrs 30mins 2secs</td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td>9</td>
+                                                                            <td>011 896 5674</td>
+                                                                            <td>03-06-2011</td>
+                                                                            <td>12:30 A.M</td>
+                                                                            <td>0hrs 45mins 2secs</td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td>10</td>
+                                                                            <td>011 896 5656</td>
+                                                                            <td>03-07-2013</td>
+                                                                            <td>12:30 P.M</td>
+                                                                            <td>1hrs 30mins 12secs</td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td>11</td>
+                                                                            <td>011 896 5645</td>
+                                                                            <td>03-07-2013</td>
+                                                                            <td>8:30 P.M</td>
+                                                                            <td>10hrs 30mins 2secs</td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td>12</td>
+                                                                            <td>091 356 1156</td>
+                                                                            <td>09-09-2011</td>
+                                                                            <td>9:30 P.M</td>
+                                                                            <td>0hrs 30mins 2secs</td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td>13</td>
+                                                                            <td>091 356 1156</td>
+                                                                            <td>03-07-2012</td>
+                                                                            <td>8:30 A.M</td>
+                                                                            <td>1hrs 30mins 2secs</td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td>14</td>
+                                                                            <td>031 356 1156</td>
+                                                                            <td>03-06-2011</td>
+                                                                            <td>12:30 A.M</td>
+                                                                            <td>0hrs 45mins 2secs</td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td>15</td>
+                                                                            <td>091 356 1156</td>
+                                                                            <td>03-07-2013</td>
+                                                                            <td>12:30 P.M</td>
+                                                                            <td>1hrs 30mins 12secs</td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td>16</td>
+                                                                            <td>071 529 5000</td>
+                                                                            <td>03-07-2013</td>
+                                                                            <td>8:30 P.M</td>
+                                                                            <td>10hrs 30mins 2secs</td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td>17</td>
+                                                                            <td>077 529 5000</td>
+                                                                            <td>09-09-2011</td>
+                                                                            <td>9:30 P.M</td>
+                                                                            <td>0hrs 30mins 2secs</td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td>18</td>
+                                                                            <td>071 277 6598</td>
+                                                                            <td>03-07-2012</td>
+                                                                            <td>8:30 A.M</td>
+                                                                            <td>1hrs 30mins 2secs</td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td>19</td>
+                                                                            <td>071 897 5869</td>
+                                                                            <td>03-06-2011</td>
+                                                                            <td>12:30 A.M</td>
+                                                                            <td>0hrs 45mins 2secs</td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td>20</td>
+                                                                            <td>071 277 6598</td>
+                                                                            <td>03-07-2013</td>
+                                                                            <td>12:30 P.M</td>
+                                                                            <td>1hrs 30mins 12secs</td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td>21</td>
+                                                                            <td>011 896 5674</td>
+                                                                            <td>03-07-2013</td>
+                                                                            <td>8:30 P.M</td>
+                                                                            <td>10hrs 30mins 2secs</td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td>22</td>
+                                                                            <td>041 225 5632</td>
+                                                                            <td>09-09-2011</td>
+                                                                            <td>9:30 P.M</td>
+                                                                            <td>0hrs 30mins 2secs</td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td>23</td>
+                                                                            <td>011 896 5674</td>
+                                                                            <td>03-07-2012</td>
+                                                                            <td>8:30 A.M</td>
+                                                                            <td>1hrs 30mins 2secs</td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td>24</td>
+                                                                            <td>011 896 5674</td>
+                                                                            <td>03-06-2011</td>
+                                                                            <td>12:30 A.M</td>
+                                                                            <td>0hrs 45mins 2secs</td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td>25</td>
+                                                                            <td>011 896 5656</td>
+                                                                            <td>03-07-2013</td>
+                                                                            <td>12:30 P.M</td>
+                                                                            <td>1hrs 30mins 12secs</td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td>26</td>
+                                                                            <td>011 896 5645</td>
+                                                                            <td>03-07-2013</td>
+                                                                            <td>8:30 P.M</td>
+                                                                            <td>10hrs 30mins 2secs</td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td>27</td>
+                                                                            <td>091 356 1156</td>
+                                                                            <td>09-09-2011</td>
+                                                                            <td>9:30 P.M</td>
+                                                                            <td>0hrs 30mins 2secs</td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td>28</td>
+                                                                            <td>091 356 1156</td>
+                                                                            <td>03-07-2012</td>
+                                                                            <td>8:30 A.M</td>
+                                                                            <td>1hrs 30mins 2secs</td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td>29</td>
+                                                                            <td>031 356 1156</td>
+                                                                            <td>03-06-2011</td>
+                                                                            <td>12:30 A.M</td>
+                                                                            <td>0hrs 45mins 2secs</td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td>30</td>
+                                                                            <td>091 356 1156</td>
+                                                                            <td>03-07-2013</td>
+                                                                            <td>12:30 P.M</td>
+                                                                            <td>1hrs 30mins 12secs</td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td>16</td>
+                                                                            <td>071 529 5000</td>
+                                                                            <td>03-07-2013</td>
+                                                                            <td>8:30 P.M</td>
+                                                                            <td>10hrs 30mins 2secs</td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td>17</td>
+                                                                            <td>077 529 5000</td>
+                                                                            <td>09-09-2011</td>
+                                                                            <td>9:30 P.M</td>
+                                                                            <td>0hrs 30mins 2secs</td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td>18</td>
+                                                                            <td>071 277 6598</td>
+                                                                            <td>03-07-2012</td>
+                                                                            <td>8:30 A.M</td>
+                                                                            <td>1hrs 30mins 2secs</td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td>19</td>
+                                                                            <td>071 897 5869</td>
+                                                                            <td>03-06-2011</td>
+                                                                            <td>12:30 A.M</td>
+                                                                            <td>0hrs 45mins 2secs</td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td>20</td>
+                                                                            <td>071 277 6598</td>
+                                                                            <td>03-07-2013</td>
+                                                                            <td>12:30 P.M</td>
+                                                                            <td>1hrs 30mins 12secs</td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td>21</td>
+                                                                            <td>011 896 5674</td>
+                                                                            <td>03-07-2013</td>
+                                                                            <td>8:30 P.M</td>
+                                                                            <td>10hrs 30mins 2secs</td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td>22</td>
+                                                                            <td>041 225 5632</td>
+                                                                            <td>09-09-2011</td>
+                                                                            <td>9:30 P.M</td>
+                                                                            <td>0hrs 30mins 2secs</td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td>23</td>
+                                                                            <td>011 896 5674</td>
+                                                                            <td>03-07-2012</td>
+                                                                            <td>8:30 A.M</td>
+                                                                            <td>1hrs 30mins 2secs</td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td>24</td>
+                                                                            <td>011 896 5674</td>
+                                                                            <td>03-06-2011</td>
+                                                                            <td>12:30 A.M</td>
+                                                                            <td>0hrs 45mins 2secs</td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td>25</td>
+                                                                            <td>011 896 5656</td>
+                                                                            <td>03-07-2013</td>
+                                                                            <td>12:30 P.M</td>
+                                                                            <td>1hrs 30mins 12secs</td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td>26</td>
+                                                                            <td>011 896 5645</td>
+                                                                            <td>03-07-2013</td>
+                                                                            <td>8:30 P.M</td>
+                                                                            <td>10hrs 30mins 2secs</td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td>27</td>
+                                                                            <td>091 356 1156</td>
+                                                                            <td>09-09-2011</td>
+                                                                            <td>9:30 P.M</td>
+                                                                            <td>0hrs 30mins 2secs</td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td>28</td>
+                                                                            <td>091 356 1156</td>
+                                                                            <td>03-07-2012</td>
+                                                                            <td>8:30 A.M</td>
+                                                                            <td>1hrs 30mins 2secs</td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td>29</td>
+                                                                            <td>031 356 1156</td>
+                                                                            <td>03-06-2011</td>
+                                                                            <td>12:30 A.M</td>
+                                                                            <td>0hrs 45mins 2secs</td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td>30</td>
+                                                                            <td>091 356 1156</td>
+                                                                            <td>03-07-2013</td>
+                                                                            <td>12:30 P.M</td>
+                                                                            <td>1hrs 30mins 12secs</td>
+                                                                        </tr>
+                                                                    </tbody>
+                                                                </table>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </td>
+
+                
+                                            
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </form>
+                        </div>
+                    </div>
+
+                <input id="generate_reprot" style="float:right; margin-right:10px;" type="button" class="button" value="Generate Report">
+
+                </div>
+            </div>
+        </div>
+    </div>
+                 
+            </td>
+        </tr>
+                </tbody>
+            </table>
+        </td>
+        </tr>
+        
+        
+        <tr>
+        </tr>
+        
+        <tr>
+            <td id="footer" colspan="3">
+
+                <div id="footer-div">
+                    <div class="footer-content">
+                        <div class="copyright">
+                            © 2005 - 2014 WSO2 Inc. All Rights Reserved.
+                        </div>
+                    </div>
+                </div>
+
+            </td>
+        </tr>
+        
+        </tbody>
+</table>
+    
+<script type="text/javascript">
+    
+if (Function('/*@cc_on return document.documentMode===10@*/')()){
+document.documentElement.className += ' ie10';
+}
+
+</script>
+
+</body>
+</html>

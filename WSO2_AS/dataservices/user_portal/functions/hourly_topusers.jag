@@ -1,0 +1,32 @@
+<%
+ 
+    var url  = "https://10.100.4.52:9443/services/LogAnalyzerDataService/view/dailyusage";  
+    var type = "json";
+    var headers = {"Content-Type": "application/json"};
+
+    var result=get(url,type,headers);
+    var data=result.data;
+    var data=parse(data);
+
+    var elementArray=data["dailyusageCollection"];
+    var re3=elementArray["dailyusage"];
+    var dataSet = {
+          "sEcho": 1,
+          "iTotalRecords": "57",
+          "iTotalDisplayRecords": "57",
+          "aaData": [
+          ]
+        };
+
+        for(var i=0;i<re3.length;i++){
+            var temp = new Array();
+            temp.push(i);
+            for(key in re3[i]){
+                temp.push(re3[i][key]);
+            }
+            dataSet.aaData.push(temp);
+        }
+
+    print(stringify(dataSet));
+
+%>

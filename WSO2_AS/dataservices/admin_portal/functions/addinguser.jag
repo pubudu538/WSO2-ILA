@@ -1,0 +1,45 @@
+<%
+
+var url  = "https://localhost:9445/services/LogAnalyzerDataService/add/userdetails";  
+var type = "application/json";
+ var dataAcquire = request.getParameter("jsonDataTransmited");
+
+var optionalHeaders = {
+ "Accept":"application/json",
+ "Content-Type" : "application/json"
+};
+
+
+ var data2 = JSON.parse(dataAcquire);
+
+ var counter = data2.dev_counter;
+ var fullname = data2.fullname;
+ var useremail = data2.useremail;
+ var devices = data2.devices;
+
+
+ for (var i = 0; i<counter; i++) {
+
+ 	var temp_devc_type = devices[i].devic_type;
+ 	var temp_devc_mac = devices[i].devic_macadd;
+ 	var temp_devc_ip = devices[i].devic_ipadd;
+
+    var param = '{"_postadd_userdetails":{"full_name" : "'+fullname+'","user_name" : "'+useremail+'", "mac_address" : "'+temp_devc_mac+'","ip_address" : "'+temp_devc_ip+'", "device_type" : "'+temp_devc_type+'"}}';
+
+	post(url, param, optionalHeaders, "json", function (data, xhr) {
+	     log("Response received");
+	   } );
+
+ }
+
+
+ 
+ var log = new Log();
+	log.info(counter);
+	log.info(fullname);
+	log.info(useremail);
+	log.info(devices);
+
+
+ 
+%>

@@ -1,0 +1,16 @@
+<%
+
+ 	var deleteIp = request.getParameter("delete_id");
+
+    var url  = "https://localhost:9445/services/LogAnalyzerDataService/delete/user/"+deleteIp;
+
+    var type = "application/json";
+    var headers = {"Accept": "application/json"};
+
+    del(url,"", headers, "json", function (data, xhr) {
+         log("Response received");
+     } );
+
+
+
+%>

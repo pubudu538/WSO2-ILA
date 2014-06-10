@@ -1,0 +1,97 @@
+<%
+
+  
+   var url  = "https://localhost:9445/services/LogAnalyzerDataServiceforUsers/view/todaybwuser/"+user_name;  
+    var type = "application/json";
+    var headers = {"Accept": "application/json"};
+
+    var result=get(url,"",headers);
+    var data=result.data;
+    var data=parse(data);
+
+    var elementArray=data["todayuserbwCollection"];
+    var re3=elementArray["userbwtoday"];
+
+
+var array=new Array();
+ var today=new Date();
+ var hourValue=parseInt(today.getHours());
+
+
+ 
+ for (var i = 0; i < 24; i++) {
+
+    array[i]=0;
+ };
+
+if(re3 == null)
+{   
+      if(hourValue==0)
+      {
+          print("[0,0]");   
+      } 
+      else
+      {
+
+      for (var i = 0; i < hourValue; i++) {
+
+        if(i==hourValue-1)
+         {        
+          print("["+i+","+array[i]+"]");         
+         }
+        else
+        {
+          print("["+i+","+array[i]+"],"+'\n');  
+          }
+     };
+       }
+}
+else
+{
+  if(re3 instanceof Array)
+  {
+
+     for (var i = 0 ; i < re3.length; i++) {      
+
+          array[re3[i].hour]=Math.round((parseInt(re3[i].total))/(1024));
+        }
+
+        for (var i = 0; i < hourValue; i++) {
+
+        if(i==hourValue-1)
+         {        
+          print("["+i+","+array[i]+"]");         
+         }
+        else
+        {
+          print("["+i+","+array[i]+"],"+'\n');  
+          }
+     }
+
+}
+
+else
+{
+
+  array[re3.hour]=Math.round((parseInt(re3.total))/(1024));
+
+      for (var i = 0; i < hourValue; i++) {
+
+        if(i==hourValue-1)
+         {        
+          print("["+i+","+array[i]+"]");         
+         }
+        else
+        {
+          print("["+i+","+array[i]+"],"+'\n');  
+          }
+     }
+
+}
+
+}
+    
+
+
+
+%>

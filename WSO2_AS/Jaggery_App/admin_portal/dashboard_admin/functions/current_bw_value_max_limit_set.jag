@@ -1,0 +1,46 @@
+<%
+
+ var url  = "https://localhost:9445/services/LogAnalyzerDataService/view/currentbwforgraph";
+                
+ var type = "json";
+ var headers = {"Content-Type": "application/json"};      
+
+ var result=get(url,type,headers);
+ var data=result.data;
+ var data=parse(data);           
+
+
+ var elementArray=data["totalhrbwCollection"];
+ var re3=elementArray["totalcurrenthrbw"];
+
+if(isNaN(re3.total)==true)
+{
+             
+     print(10);            
+}
+else
+{
+	var value = parseInt(Math.round((re3.total/(1024*1024))));
+	var max=0;
+
+  	if(value<10)
+  	{
+  		max=10;
+  	}else if(value<100)
+  	{
+  		max=100;
+  	}else if(value<500)
+  	{
+  		max=500;
+  	}else
+  	{
+  		max=value+500;
+  	}
+
+  	print(max);
+}
+
+
+%>
+
+

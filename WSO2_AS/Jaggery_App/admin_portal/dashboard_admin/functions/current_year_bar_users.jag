@@ -1,0 +1,78 @@
+<%
+
+ var url  = "https://localhost:9445/services/LogAnalyzerDataService/view/namesforcurrentyearbgraph";
+                
+ var type = "json";
+ var headers = {"Content-Type": "application/json"};      
+
+ var result=get(url,type,headers);
+ var data=result.data;
+ var data=parse(data);           
+
+
+ var elementArray=data["namesforcurrentyearCollection"];
+ var re3=elementArray["namesyeardata"];
+
+
+
+if(re3==null)
+{
+    print("'No Data Found'");
+
+}
+else
+{
+
+  if(re3 instanceof Array)
+  {
+      for (var i = 0 ; i < re3.length; i++) {
+   
+
+   if(i==re3.length-1)
+   {
+      
+      print("'"+getfullname(re3[i].full_name)+"'");
+   }
+   else
+   {
+
+      print("'"+getfullname(re3[i].full_name)+"',");
+     
+   }
+                
+}
+  }
+  else
+  {
+
+    print("'"+getfullname(re3.full_name)+"'");
+
+  }
+
+}
+
+
+
+function getfullname(name) {
+ 
+  var str=name.split(" ");
+  var fullname="";
+
+
+  for(var i=0;i<str.length;i++)
+  {
+     if(i==str.length-1)
+     {
+        fullname=fullname+str[i];
+     }
+     else
+     {  
+        fullname=fullname+str[i]+"_";
+     }
+      
+  }
+
+  return fullname;
+}
+
+%>

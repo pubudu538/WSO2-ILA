@@ -1,0 +1,71 @@
+<%
+
+    var url  = "https://localhost:9445/services/LogAnalyzerDataService/view/internalserverdetails";
+
+    var type = "application/json";
+    var headers = {"Accept": "application/json"};
+
+    var result=get(url,"",headers);
+    var data=result.data;
+    var data=parse(data);
+
+    var elementArray=data["yearlyusageCollection"];
+    var re3=elementArray["yearlyusage"];
+
+
+    if(re3 instanceof Array ){
+       // print("Array");
+
+        var dataSet = {
+          "sEcho": 3,
+          "iTotalRecords": re3.length,
+          "iTotalDisplayRecords": re3.length,
+          "aaData": [
+          ]
+        };
+
+        for(var i=0;i<re3.length;i++){
+            var temp = new Array();
+            var delteId = "";
+            for(key in re3[i]){
+
+                temp.push(re3[i][key]);
+
+                  delteId = re3[i]["Server_id"];
+
+
+            }
+
+            temp.push("<a style=\"background-image: url(images/delete.gif);\" class=\"icon-link\" onclick=\"deleteConfirm("+delteId+");\"><font color=\"#4682b4\">Delete</font></a>");
+
+            dataSet.aaData.push(temp);
+
+        }
+
+
+    }else{
+       // print("Not an Array");
+
+         var temp = new Array();
+
+         var dataSet = {
+          "sEcho": 3,
+          "iTotalRecords": 1,
+          "iTotalDisplayRecords": 1,
+          "aaData": [
+          ]
+        };     
+
+        temp.push(re3.Server_id);
+        temp.push(re3.ip_address);
+        temp.push(re3.descriptionz);
+        temp.push("<a style=\"background-image: url(images/delete.gif);\" class=\"icon-link\" onclick=\"deleteConfirm("+re3.Server_id+");\"><font color=\"#4682b4\">Delete</font></a>");
+
+        dataSet.aaData.push(temp);
+        
+    }       
+
+    print(stringify(dataSet));
+
+
+ %>

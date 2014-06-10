@@ -1,0 +1,111 @@
+://localhost:9445/services/LogAnalyzerDataServiceforUsers/view/totalusagepermonth/"+user_name+"/"+user_name1+"/"+user_name2;  
+    var type = "application/json";
+    var headers = {"Accept": "application/json"};
+
+    var result=get(url,"",headers);
+    var data=result.data;
+    var data=parse(data);
+
+    var elementArray=data["topsitesuseryCollection"];
+    var re3=elementArray["topsitesusery"];
+
+    var totalvalues=new Array();
+    var monthNames = [ "January", "February", "March", "April", "May", "June","July", "August", "September", "October", "November", "December" ];
+  
+
+   var today = new Date();
+
+   var num=parseInt(today.getMonth()+1);
+
+
+if( re3 == null)
+{
+        print("{x: '2014',}");
+}
+else
+{
+
+  for (var i = 0 ; i < 12; i++) {
+  
+  totalvalues[i] = 0;
+
+}
+
+  if(re3 instanceof Array)
+  {
+
+
+for (var j = 0 ; j < re3.length; j++) {
+  
+  if(isNaN(re3[j].total)==false)
+  {
+   var str=parseInt((re3[j].month).substring(5));
+
+  totalvalues[str-1] = (re3[j].total/1024).toFixed(2);
+  }
+
+}
+    
+
+    var monthstr="";
+
+   for (var i = 0 ; i < num; i++) {
+	 
+
+   if(i==num-1)
+   {
+       monthstr=monthstr+monthNames[i]+":"+totalvalues[i];
+   }
+   else
+   {
+
+     monthstr=monthstr+monthNames[i]+":"+totalvalues[i]+","
+     
+   }
+				
+				
+ }
+
+ print("{x: '2014',"+monthstr+"}");
+
+}
+else
+{
+
+ if(isNaN(re3.total)==false){
+
+  var str=parseInt((re3.month).substring(5));
+
+  totalvalues[str-1] = (re3.total/1024).toFixed(2);
+
+ }
+  
+
+  var monthstr="";
+
+   for (var i = 0 ; i < num; i++) {
+   
+
+   if(i==num-1)
+   {
+       monthstr=monthstr+monthNames[i]+":"+totalvalues[i];
+   }
+   else
+   {
+
+     monthstr=monthstr+monthNames[i]+":"+totalvalues[i]+","
+     
+   }
+        
+        
+ }
+
+ print("{x: '2014',"+monthstr+"}");
+
+
+}
+
+
+
+}
+%>

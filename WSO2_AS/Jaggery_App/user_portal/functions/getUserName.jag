@@ -1,0 +1,7 @@
+<%
+
+   include("user_dashboard_session_validate.jag");
+
+   print(user_name);
+
+%>

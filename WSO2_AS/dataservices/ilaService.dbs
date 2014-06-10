@@ -1,0 +1,791 @@
+<data description="single service for whole database" enableBatchRequests="false" enableBoxcarring="false" name="ilaService" serviceNamespace="http://ws.wso2.org/dataservice" serviceStatus="active">
+   <config id="default">
+      <property name="carbon_datasource_name">Bam_data_source</property>
+   </config>
+   <query id="user_year" useConfig="default">
+      <sql>SELECT siteIp,round(SUM(bandwidth)/1024,2) AS bandwidth , year FROM ((SELECT dailyusage.siteIp AS siteIp, SUM( dailyusage.amount ) AS bandwidth, DATE_FORMAT( dailyusage.day, '%Y' ) AS YEAR FROM dailyusage JOIN user ON dailyusage.userIp = user.ip_address WHERE DAY BETWEEN DATE_FORMAT( NOW( ) , '%Y-%m-01' ) AND CURDATE( ) AND user.user_name = CONCAT(?, "@wso2.com" ) GROUP BY siteIp )  UNION ALL (SELECT monthlyusage.siteIp AS siteIp, SUM( monthlyusage.amount ) AS bandwidth, SUBSTRING( MONTH , 1, 4 ) AS year FROM monthlyusage JOIN user ON monthlyusage.userIp = user.ip_address WHERE month BETWEEN DATE_FORMAT( NOW( ) ,  '%Y-%01' ) AND DATE_FORMAT( NOW( ) ,  '%Y-%m' ) AND user.user_name = CONCAT(  ?,  "@wso2.com" ) GROUP BY siteIp)  UNION ALL (SELECT yearlyusage.siteIp AS siteIp, SUM( yearlyusage.amount ) AS bandwidth, year FROM yearlyusage JOIN user ON yearlyusage.userIp = user.ip_address WHERE year BETWEEN DATE_FORMAT( (DATE_SUB( NOW( ) , INTERVAL ? YEAR ) ) ,  '%Y') AND DATE_FORMAT( NOW( ) ,  '%Y' ) AND user.user_name = CONCAT( ?,  "@wso2.com" ) GROUP BY siteIp) ) x GROUP BY siteIp ORDER BY bandwidth DESC LIMIT 100</sql>
+      <param name="name" ordinal="1" paramType="SCALAR" sqlType="STRING" type="IN"/>
+      <param name="name1" ordinal="2" paramType="SCALAR" sqlType="STRING" type="IN"/>
+      <param name="year" ordinal="3" paramType="SCALAR" sqlType="INTEGER" type="IN"/>
+      <param name="name2" ordinal="4" paramType="SCALAR" sqlType="STRING" type="IN"/>
+      <result element="userYear" rowName="userYearSearch">
+         <element column="siteIp" name="siteIp" xsdType="xs:string"/>
+         <element column="year" name="year" xsdType="xs:string"/>
+         <element column="bandwidth" name="bandwidth" xsdType="xs:integer"/>
+      </result>
+   </query>
+   <resource method="GET" path="view/userYear/{name}/{name1}/{year}/{name2}">
+      <call-query href="user_year">
+         <with-param name="name" query-param="name"/>
+         <with-param name="name1" query-param="name1"/>
+         <with-param name="year" query-param="year"/>
+         <with-param name="name2" query-param="name2"/>
+      </call-query>
+   </resource>
+   <query id="user_current" useConfig="default">
+      <sql>select hourlyusage.siteIp as siteIp,  round( SUM( hourlyusage.amount ) /1024,2)  AS bandwidth from hourlyusage join user on hourlyusage.userIp = user.ip_address where ((hourlyusage.day = CURDATE() and HOUR(NOW()) - 1 &lt;= hourlyusage.hour) or (hourlyusage.day = DATE(DATE_SUB(NOW(),INTERVAL 1 HOUR)) and 24 - 1 + HOUR(NOW()) &lt;=  hourlyusage.hour))and user.user_name=CONCAT(?,"@wso2.com")group by siteIp ORDER BY bandwidth DESC LIMIT 100</sql>
+      <param name="name" ordinal="1" paramType="SCALAR" sqlType="STRING" type="IN"/>
+      <result element="userCurrent" rowName="siteBandwidth">
+         <element column="siteIp" name="siteIp" xsdType="xs:string"/>
+         <element column="bandwidth" name="bandwidth" xsdType="xs:integer"/>
+      </result>
+   </query>
+   <resource method="GET" path="view/userCurrent/{name}">
+      <call-query href="user_current">
+         <with-param name="name" query-param="name"/>
+      </call-query>
+   </resource>
+   <query id="user_hour" useConfig="default">
+      <sql>SELECT hourlyusage.siteIp AS siteIp, round(hourlyusage.amount/1024,2) AS bandwidth, hourlyusage.day AS day , hourlyusage.hour AS hour  from hourlyusage join user on hourlyusage.userIp = user.ip_address where ((hourlyusage.day = CURDATE() and HOUR(NOW()) - ? &lt;= hourlyusage.hour)or(hourlyusage.day = DATE(DATE_SUB(NOW(),INTERVAL ? HOUR)) and 24 - ? + HOUR(NOW()) &lt;= hourlyusage.hour))and user.user_name=CONCAT(?,"@wso2.com") ORDER BY bandwidth DESC LIMIT 100;</sql>
+      <param name="hour" ordinal="1" paramType="SCALAR" sqlType="INTEGER" type="IN"/>
+      <param name="hour1" ordinal="2" paramType="SCALAR" sqlType="INTEGER" type="IN"/>
+      <param name="hour2" ordinal="3" paramType="SCALAR" sqlType="INTEGER" type="IN"/>
+      <param name="name" ordinal="4" paramType="SCALAR" sqlType="STRING" type="IN"/>
+      <result element="userHour" rowName="userHourSearch">
+         <element column="siteIp" name="siteIp" xsdType="xs:string"/>
+         <element column="day" name="day" xsdType="xs:string"/>
+         <element column="hour" name="hour" xsdType="xs:string"/>
+         <element column="bandwidth" name="bandwidth" xsdType="xs:integer"/>
+      </result>
+   </query>
+   <resource method="GET" path="view/userHour/{hour}/{hour1}/{hour2}/{name}">
+      <call-query href="user_hour">
+         <with-param name="hour" query-param="hour"/>
+         <with-param name="hour1" query-param="hour1"/>
+         <with-param name="hour2" query-param="hour2"/>
+         <with-param name="name" query-param="name"/>
+      </call-query>
+   </resource>
+   <query id="site_year" useConfig="default">
+      <sql>SELECT user, round(SUM( bandwidth )/1024,2) AS bandwidth , year FROM ((SELECT user.full_name AS user, SUM( dailyusage.amount ) AS bandwidth , DATE_FORMAT(day ,  '%Y')  as year FROM dailyusage JOIN user ON dailyusage.userIp = user.ip_address WHERE DAY BETWEEN DATE_FORMAT( NOW( ) ,  '%Y-%m-01' ) AND CURDATE( ) AND dailyusage.siteIp =  ? GROUP BY user)UNION ALL (SELECT user.full_name AS user, SUM(monthlyusage.amount) AS bandwidth , substring(month,1,4) as year FROM monthlyusage JOIN user ON monthlyusage.userIp = user.ip_address where month BETWEEN DATE_FORMAT(NOW() ,'%Y-%01') and DATE_FORMAT(NOW() ,'%Y-%m')AND monthlyusage.siteIp = ? GROUP BY user)UNION ALL (SELECT user.full_name AS user,  yearlyusage.amount  AS bandwidth , year FROM yearlyusage JOIN user ON yearlyusage.userIp = user.ip_address where year BETWEEN  DATE_FORMAT((DATE_SUB(NOW(),INTERVAL ? YEAR)),'%Y') and DATE_FORMAT(NOW() ,'%Y')and yearlyusage.siteIp =  ?)) x GROUP BY user ORDER BY bandwidth DESC LIMIT 100</sql>
+      <param name="siteIP" ordinal="1" paramType="SCALAR" sqlType="STRING" type="IN"/>
+      <param name="siteIP1" ordinal="2" paramType="SCALAR" sqlType="STRING" type="IN"/>
+      <param name="year" ordinal="3" paramType="SCALAR" sqlType="INTEGER" type="IN"/>
+      <param name="siteIP2" ordinal="4" paramType="SCALAR" sqlType="STRING" type="IN"/>
+      <result element="siteYear" rowName="siteYearSearch">
+         <element column="user" name="user" xsdType="xs:string"/>
+         <element column="year" name="year" xsdType="xs:string"/>
+         <element column="bandwidth" name="bandwidth" xsdType="xs:integer"/>
+      </result>
+   </query>
+   <resource method="GET" path="view/siteYear/{siteIP}/{siteIP1}/{year}/{siteIP2}">
+      <call-query href="site_year">
+         <with-param name="siteIP" query-param="siteIP"/>
+         <with-param name="year" query-param="year"/>
+         <with-param name="siteIP1" query-param="siteIP1"/>
+         <with-param name="siteIP2" query-param="siteIP2"/>
+      </call-query>
+   </resource>
+   <query id="site_day" useConfig="default">
+      <sql>SELECT user, round(bandwidth/1024,2) ,day FROM ((SELECT user.full_name AS user, SUM( hourlyusage.amount ) AS bandwidth, day FROM hourlyusage JOIN user ON hourlyusage.userIp = user.ip_address WHERE DAY = CURDATE( ) AND hourlyusage.siteIp =  ? GROUP BY user)UNION ALL (SELECT user.full_name AS user, dailyusage.amount AS bandwidth, day FROM dailyusage JOIN user ON dailyusage.userIp = user.ip_address WHERE DAY BETWEEN DATE( DATE_SUB( NOW( ) , INTERVAL(? -1 ) MONTH ) ) AND CURDATE( ) AND dailyusage.siteIp =  ?)) AS x ORDER BY bandwidth DESC LIMIT 100</sql>
+      <param name="siteIP" ordinal="1" paramType="SCALAR" sqlType="STRING" type="IN"/>
+      <param name="day" ordinal="2" paramType="SCALAR" sqlType="INTEGER" type="IN"/>
+      <param name="siteIP1" ordinal="3" paramType="SCALAR" sqlType="STRING" type="IN"/>
+      <result element="siteDay" rowName="siteDaySearch">
+         <element column="user" name="user" xsdType="xs:string"/>
+         <element column="day" name="day" xsdType="xs:string"/>
+         <element column="bandwidth" name="bandwidth" xsdType="xs:integer"/>
+      </result>
+   </query>
+   <resource method="GET" path="view/siteDay/{siteIP}/{day}/{siteIP1}">
+      <call-query href="site_day">
+         <with-param name="siteIP" query-param="siteIP"/>
+         <with-param name="day" query-param="day"/>
+         <with-param name="siteIP1" query-param="siteIP1"/>
+      </call-query>
+   </resource>
+   <query id="site_hour" useConfig="default">
+      <sql>SELECT user.full_name AS user, round(hourlyusage.amount/1024,2)  AS bandwidth, hourlyusage.hour AS hour , hourlyusage.day AS day FROM hourlyusage JOIN user ON hourlyusage.userIp = user.ip_address WHERE ((hourlyusage.day = CURDATE( ) AND HOUR( NOW( ) ) - ? &lt;= hourlyusage.hour)OR (hourlyusage.day = DATE( DATE_SUB( NOW( ) , INTERVAL ? HOUR ) ) AND 24 -? + HOUR( NOW( ) ) &lt;= hourlyusage.hour))AND hourlyusage.siteIp = ? ORDER BY bandwidth DESC LIMIT 100</sql>
+      <param name="hour" ordinal="1" paramType="SCALAR" sqlType="INTEGER" type="IN"/>
+      <param name="hour1" ordinal="2" paramType="SCALAR" sqlType="INTEGER" type="IN"/>
+      <param name="hour2" ordinal="3" paramType="SCALAR" sqlType="INTEGER" type="IN"/>
+      <param name="siteIP" ordinal="4" paramType="SCALAR" sqlType="STRING" type="IN"/>
+      <result element="siteHour" rowName="siteHourSearch">
+         <element column="user" name="user" xsdType="xs:string"/>
+         <element column="day" name="day" xsdType="xs:string"/>
+         <element column="hour" name="hour" xsdType="xs:string"/>
+         <element column="bandwidth" name="bandwidth" xsdType="xs:integer"/>
+      </result>
+   </query>
+   <resource method="GET" path="view/siteHour/{hour}/{hour1}/{hour2}/{siteIP}">
+      <call-query href="site_hour">
+         <with-param name="hour" query-param="hour"/>
+         <with-param name="hour1" query-param="hour1"/>
+         <with-param name="hour2" query-param="hour2"/>
+         <with-param name="siteIP" query-param="siteIP"/>
+      </call-query>
+   </resource>
+   <query id="user_day" useConfig="default">
+      <sql>SELECT siteIp, round(bandwidth /1024,2) AS bandwidth, day FROM ((SELECT hourlyusage.siteIp AS siteIp,round(SUM(hourlyusage.amount)/1024,2) AS bandwidth, day FROM hourlyusage JOIN user ON hourlyusage.userIp = user.ip_address WHERE hourlyusage.day = CURDATE( ) AND user.user_name = CONCAT( ?, "@wso2.com" ) GROUP BY siteIp, DAY)UNION ALL (SELECT dailyusage.siteIp AS siteIp, dailyusage.amount AS bandwidth, day FROM dailyusage JOIN user ON dailyusage.userIp = user.ip_address WHERE dailyusage.day BETWEEN DATE( DATE_SUB( NOW( ) , INTERVAL ? DAY ) ) AND CURDATE( ) AND user.user_name = CONCAT(?, "@wso2.com" )))tb3 ORDER BY bandwidth DESC LIMIT 100</sql>
+      <param name="name" ordinal="1" paramType="SCALAR" sqlType="STRING" type="IN"/>
+      <param name="day" ordinal="2" paramType="SCALAR" sqlType="INTEGER" type="IN"/>
+      <param name="name1" ordinal="3" paramType="SCALAR" sqlType="STRING" type="IN"/>
+      <result element="userDay" rowName="userDaySearch">
+         <element column="siteIp" name="siteIp" xsdType="xs:string"/>
+         <element column="day" name="day" xsdType="xs:string"/>
+         <element column="bandwidth" name="bandwidth" xsdType="xs:integer"/>
+      </result>
+   </query>
+   <resource method="GET" path="view/userDay/{name}/{day}/{name1}">
+      <call-query href="user_day">
+         <with-param name="name" query-param="name"/>
+         <with-param name="day" query-param="day"/>
+         <with-param name="name1" query-param="name1"/>
+      </call-query>
+   </resource>
+   <query id="site_month" useConfig="default">
+      <sql>SELECT user,  round(SUM( bandwidth )/1024,2) AS bandwidth , month FROM ((SELECT user.full_name AS user, SUM( dailyusage.amount ) AS bandwidth , DATE_FORMAT(day ,  '%Y-%m')  as month FROM dailyusage JOIN user ON dailyusage.userIp = user.ip_address WHERE DAY BETWEEN DATE_FORMAT( NOW( ) ,  '%Y-%m-01' ) AND CURDATE( ) AND dailyusage.siteIp =  ? GROUP BY user)UNION ALL (SELECT user.full_name AS user,  monthlyusage.amount  AS bandwidth , month FROM monthlyusage JOIN user ON monthlyusage.userIp = user.ip_address WHERE MONTH BETWEEN DATE_FORMAT( DATE( DATE_SUB( NOW( ) , INTERVAL( ? -1 ) MONTH ) ) ,  '%Y-%m' ) AND DATE_FORMAT( NOW( ) ,  '%Y-%m' ) AND monthlyusage.siteIp =  ?)) AS x GROUP BY month,user ORDER BY bandwidth DESC LIMIT 100</sql>
+      <param name="siteIP" ordinal="1" paramType="SCALAR" sqlType="STRING" type="IN"/>
+      <param name="month" ordinal="2" paramType="SCALAR" sqlType="INTEGER" type="IN"/>
+      <param name="siteIP1" ordinal="3" paramType="SCALAR" sqlType="STRING" type="IN"/>
+      <result element="siteMonth" rowName="siteMonthSearch">
+         <element column="user" name="user" xsdType="xs:string"/>
+         <element column="month" name="month" xsdType="xs:string"/>
+         <element column="bandwidth" name="bandwidth" xsdType="xs:integer"/>
+      </result>
+   </query>
+   <resource method="GET" path="view/siteMonth/{siteIP}/{month}/{siteIP1}">
+      <call-query href="site_month">
+         <with-param name="siteIP" query-param="siteIP"/>
+         <with-param name="month" query-param="month"/>
+         <with-param name="siteIP1" query-param="siteIP1"/>
+      </call-query>
+   </resource>
+   <query id="site_current" useConfig="default">
+      <sql>SELECT user.full_name AS user, round(SUM( hourlyusage.amount )/1024,2)  AS bandwidth FROM hourlyusage JOIN user ON hourlyusage.userIp = user.ip_address  WHERE ((hourlyusage.day = CURDATE( ) AND HOUR( NOW( ) ) -1 &lt;= hourlyusage.hour)OR (hourlyusage.day = DATE( DATE_SUB( NOW( ) , INTERVAL 1 HOUR ) ) AND 24 -1 + HOUR( NOW( ) ) &lt;= hourlyusage.hour))AND hourlyusage.siteIp = ? GROUP BY user ORDER BY bandwidth DESC LIMIT 100</sql>
+      <param name="siteIP" ordinal="1" paramType="SCALAR" sqlType="STRING" type="IN"/>
+      <result element="siteCurrent" rowName="siteCurrentSearch">
+         <element column="user" name="user" xsdType="xs:string"/>
+         <element column="bandwidth" name="bandwidth" xsdType="xs:integer"/>
+      </result>
+   </query>
+   <resource method="GET" path="view/siteCurrent/{siteIP}">
+      <call-query href="site_current">
+         <with-param name="siteIP" query-param="siteIP"/>
+      </call-query>
+   </resource>
+   <query id="user_month" useConfig="default">
+      <sql>SELECT siteIp, round(SUM( bandwidth )/1024,2)  AS bandwidth, month FROM ((SELECT dailyusage.siteIp AS siteIp, SUM( dailyusage.amount ) AS bandwidth, DATE_FORMAT( dailyusage.day, '%Y-%m' ) AS month FROM dailyusage JOIN user ON dailyusage.userIp = user.ip_address WHERE DAY BETWEEN DATE_FORMAT( NOW( ) , '%Y-%m-01' ) AND CURDATE( ) AND user.user_name = CONCAT(?, "@wso2.com" ) GROUP BY siteIp)UNION ALL (SELECT monthlyusage.siteIp AS siteIp, SUM( monthlyusage.amount ) AS bandwidth, month FROM monthlyusage JOIN user ON monthlyusage.userIp = user.ip_address WHERE MONTH BETWEEN DATE_FORMAT( DATE( DATE_SUB( NOW( ) , INTERVAL( ? -1 ) MONTH ) ) , '%Y-%m' ) AND DATE_FORMAT( NOW( ) , '%Y-%m' ) AND user.user_name = CONCAT( ?, "@wso2.com" ) GROUP BY siteIp)) x GROUP BY MONTH , siteIp ORDER BY bandwidth DESC LIMIT 100</sql>
+      <param name="name" ordinal="1" paramType="SCALAR" sqlType="STRING" type="IN"/>
+      <param name="month" ordinal="2" paramType="SCALAR" sqlType="INTEGER" type="IN"/>
+      <param name="name1" ordinal="3" paramType="SCALAR" sqlType="STRING" type="IN"/>
+      <result element="userMonth" rowName="userMonthSearch">
+         <element column="siteIp" name="siteIp" xsdType="xs:string"/>
+         <element column="month" name="month" xsdType="xs:string"/>
+         <element column="bandwidth" name="bandwidth" xsdType="xs:integer"/>
+      </result>
+   </query>
+   <resource method="GET" path="view/userMonth/{name}/{month}/{name1}">
+      <call-query href="user_month">
+         <with-param name="name" query-param="name"/>
+         <with-param name="month" query-param="month"/>
+         <with-param name="name1" query-param="name1"/>
+      </call-query>
+   </resource>
+   <query id="select_all_admin_login_query" useConfig="default">
+      <sql>SELECT admin_id, admin_name, admin_password FROM admin_login</sql>
+      <result element="admin_loginCollection" rowName="admin_login">
+         <element column="admin_id" name="admin_id" xsdType="xs:integer"/>
+         <element column="admin_name" name="admin_name" xsdType="xs:string"/>
+         <element column="admin_password" name="admin_password" xsdType="xs:string"/>
+      </result>
+   </query>
+   <query id="delete_hourlyusage_query" useConfig="default">
+      <sql>DELETE FROM hourlyusage WHERE day=?</sql>
+      <param name="day" ordinal="1" paramType="SCALAR" sqlType="STRING" type="IN"/>
+   </query>
+   <query id="select_all_yearlyusage_query" useConfig="default">
+      <sql>SELECT userIp, siteIp, amount, year FROM yearlyusage</sql>
+      <result element="yearlyusageCollection" rowName="yearlyusage">
+         <element column="userIp" name="userIp" xsdType="xs:string"/>
+         <element column="siteIp" name="siteIp" xsdType="xs:string"/>
+         <element column="amount" name="amount" xsdType="xs:integer"/>
+         <element column="year" name="year" xsdType="xs:string"/>
+      </result>
+   </query>
+   <query id="select_with_key_hourlyusage_query" useConfig="default">
+      <sql>SELECT userIp, siteIp, amount, day, hour FROM hourlyusage WHERE day=?</sql>
+      <param name="day" ordinal="1" paramType="SCALAR" sqlType="STRING" type="IN"/>
+      <result element="hourlyusageCollection" rowName="hourlyusage">
+         <element column="userIp" name="userIp" xsdType="xs:string"/>
+         <element column="siteIp" name="siteIp" xsdType="xs:string"/>
+         <element column="amount" name="amount" xsdType="xs:integer"/>
+         <element column="day" name="day" xsdType="xs:string"/>
+         <element column="hour" name="hour" xsdType="xs:string"/>
+      </result>
+   </query>
+   <query id="insert_admin_login_query" useConfig="default">
+      <sql>INSERT INTO admin_login(admin_name,admin_password) VALUES(?,?)</sql>
+      <param name="admin_name" ordinal="1" paramType="SCALAR" sqlType="STRING" type="IN"/>
+      <param name="admin_password" ordinal="2" paramType="SCALAR" sqlType="STRING" type="IN"/>
+   </query>
+   <query id="delete_dailyusage_query" useConfig="default">
+      <sql>DELETE FROM dailyusage WHERE day=?</sql>
+      <param name="day" ordinal="1" paramType="SCALAR" sqlType="STRING" type="IN"/>
+   </query>
+   <query id="delete_user_query" useConfig="default">
+      <sql>DELETE FROM user WHERE user_id=?</sql>
+      <param name="user_id" ordinal="1" paramType="SCALAR" sqlType="INTEGER" type="IN"/>
+   </query>
+   <query id="select_all_internal_server_query" useConfig="default">
+      <sql>SELECT Server_id, ip_address, description FROM internal_server</sql>
+      <result element="internal_serverCollection" rowName="internal_server">
+         <element column="Server_id" name="Server_id" xsdType="xs:integer"/>
+         <element column="ip_address" name="ip_address" xsdType="xs:string"/>
+         <element column="description" name="description" xsdType="xs:string"/>
+      </result>
+   </query>
+   <query id="delete_internal_server_query" useConfig="default">
+      <sql>DELETE FROM internal_server WHERE Server_id=?</sql>
+      <param name="Server_id" ordinal="1" paramType="SCALAR" sqlType="INTEGER" type="IN"/>
+   </query>
+   <query id="update_callLogEntries_query" useConfig="default">
+      <sql>UPDATE callLogEntries SET callingPartyNumber=?,originIp=?,CalledPartyNumber=?,duration=?,timesta=? WHERE destIp=?</sql>
+      <param name="callingPartyNumber" ordinal="1" paramType="SCALAR" sqlType="STRING" type="IN"/>
+      <param name="originIp" ordinal="2" paramType="SCALAR" sqlType="STRING" type="IN"/>
+      <param name="CalledPartyNumber" ordinal="3" paramType="SCALAR" sqlType="STRING" type="IN"/>
+      <param name="duration" ordinal="4" paramType="SCALAR" sqlType="INTEGER" type="IN"/>
+      <param name="timesta" ordinal="5" paramType="SCALAR" sqlType="STRING" type="IN"/>
+      <param name="destIp" ordinal="6" paramType="SCALAR" sqlType="STRING" type="IN"/>
+   </query>
+   <query id="select_with_key_user_query" useConfig="default">
+      <sql>SELECT user_id, full_name, user_name, mac_address, ip_address FROM user WHERE user_id=?</sql>
+      <param name="user_id" ordinal="1" paramType="SCALAR" sqlType="INTEGER" type="IN"/>
+      <result element="userCollection" rowName="user">
+         <element column="user_id" name="user_id" xsdType="xs:integer"/>
+         <element column="full_name" name="full_name" xsdType="xs:string"/>
+         <element column="user_name" name="user_name" xsdType="xs:string"/>
+         <element column="mac_address" name="mac_address" xsdType="xs:string"/>
+         <element column="ip_address" name="ip_address" xsdType="xs:string"/>
+      </result>
+   </query>
+   <query id="update_user_query" useConfig="default">
+      <sql>UPDATE user SET full_name=?,user_name=?,mac_address=?,ip_address=? WHERE user_id=?</sql>
+      <param name="full_name" ordinal="1" paramType="SCALAR" sqlType="STRING" type="IN"/>
+      <param name="user_name" ordinal="2" paramType="SCALAR" sqlType="STRING" type="IN"/>
+      <param name="mac_address" ordinal="3" paramType="SCALAR" sqlType="STRING" type="IN"/>
+      <param name="ip_address" ordinal="4" paramType="SCALAR" sqlType="STRING" type="IN"/>
+      <param name="user_id" ordinal="5" paramType="SCALAR" sqlType="INTEGER" type="IN"/>
+   </query>
+   <query id="update_hourlyusage_query" useConfig="default">
+      <sql>UPDATE hourlyusage SET userIp=?,siteIp=?,amount=?,hour=? WHERE day=?</sql>
+      <param name="userIp" ordinal="1" paramType="SCALAR" sqlType="STRING" type="IN"/>
+      <param name="siteIp" ordinal="2" paramType="SCALAR" sqlType="STRING" type="IN"/>
+      <param name="amount" ordinal="3" paramType="SCALAR" sqlType="INTEGER" type="IN"/>
+      <param name="hour" ordinal="4" paramType="SCALAR" sqlType="STRING" type="IN"/>
+      <param name="day" ordinal="5" paramType="SCALAR" sqlType="STRING" type="IN"/>
+   </query>
+   <query id="select_with_key_weeklyusage_query" useConfig="default">
+      <sql>SELECT userIp, siteIp, amount, year, week FROM weeklyusage WHERE siteIp=?</sql>
+      <param name="siteIp" ordinal="1" paramType="SCALAR" sqlType="STRING" type="IN"/>
+      <result element="weeklyusageCollection" rowName="weeklyusage">
+         <element column="userIp" name="userIp" xsdType="xs:string"/>
+         <element column="siteIp" name="siteIp" xsdType="xs:string"/>
+         <element column="amount" name="amount" xsdType="xs:integer"/>
+         <element column="year" name="year" xsdType="xs:integer"/>
+         <element column="week" name="week" xsdType="xs:integer"/>
+      </result>
+   </query>
+   <query id="select_all_monthlyusage_query" useConfig="default">
+      <sql>SELECT userIp, siteIp, amount, month FROM monthlyusage</sql>
+      <result element="monthlyusageCollection" rowName="monthlyusage">
+         <element column="userIp" name="userIp" xsdType="xs:string"/>
+         <element column="siteIp" name="siteIp" xsdType="xs:string"/>
+         <element column="amount" name="amount" xsdType="xs:integer"/>
+         <element column="month" name="month" xsdType="xs:string"/>
+      </result>
+   </query>
+   <query id="select_with_key_dailyusage_query" useConfig="default">
+      <sql>SELECT userIp, siteIp, amount, day FROM dailyusage WHERE day=?</sql>
+      <param name="day" ordinal="1" paramType="SCALAR" sqlType="STRING" type="IN"/>
+      <result element="dailyusageCollection" rowName="dailyusage">
+         <element column="userIp" name="userIp" xsdType="xs:string"/>
+         <element column="siteIp" name="siteIp" xsdType="xs:string"/>
+         <element column="amount" name="amount" xsdType="xs:integer"/>
+         <element column="day" name="day" xsdType="xs:string"/>
+      </result>
+   </query>
+   <query id="select_all_dailyusage_query" useConfig="default">
+      <sql>SELECT userIp, siteIp, amount, day FROM dailyusage</sql>
+      <result element="dailyusageCollection" rowName="dailyusage">
+         <element column="userIp" name="userIp" xsdType="xs:string"/>
+         <element column="siteIp" name="siteIp" xsdType="xs:string"/>
+         <element column="amount" name="amount" xsdType="xs:integer"/>
+         <element column="day" name="day" xsdType="xs:string"/>
+      </result>
+   </query>
+   <query id="select_with_key_yearlyusage_query" useConfig="default">
+      <sql>SELECT userIp, siteIp, amount, year FROM yearlyusage WHERE siteIp=?</sql>
+      <param name="siteIp" ordinal="1" paramType="SCALAR" sqlType="STRING" type="IN"/>
+      <result element="yearlyusageCollection" rowName="yearlyusage">
+         <element column="userIp" name="userIp" xsdType="xs:string"/>
+         <element column="siteIp" name="siteIp" xsdType="xs:string"/>
+         <element column="amount" name="amount" xsdType="xs:integer"/>
+         <element column="year" name="year" xsdType="xs:string"/>
+      </result>
+   </query>
+   <query id="select_all_hourlyusage_query" useConfig="default">
+      <sql>SELECT userIp, siteIp, amount, day, hour FROM hourlyusage</sql>
+      <result element="hourlyusageCollection" rowName="hourlyusage">
+         <element column="userIp" name="userIp" xsdType="xs:string"/>
+         <element column="siteIp" name="siteIp" xsdType="xs:string"/>
+         <element column="amount" name="amount" xsdType="xs:integer"/>
+         <element column="day" name="day" xsdType="xs:string"/>
+         <element column="hour" name="hour" xsdType="xs:string"/>
+      </result>
+   </query>
+   <query id="update_internal_server_query" useConfig="default">
+      <sql>UPDATE internal_server SET ip_address=?,description=? WHERE Server_id=?</sql>
+      <param name="ip_address" ordinal="1" paramType="SCALAR" sqlType="STRING" type="IN"/>
+      <param name="description" ordinal="2" paramType="SCALAR" sqlType="STRING" type="IN"/>
+      <param name="Server_id" ordinal="3" paramType="SCALAR" sqlType="INTEGER" type="IN"/>
+   </query>
+   <query id="insert_yearlyusage_query" useConfig="default">
+      <sql>INSERT INTO yearlyusage(userIp,siteIp,amount,year) VALUES(?,?,?,?)</sql>
+      <param name="userIp" ordinal="1" paramType="SCALAR" sqlType="STRING" type="IN"/>
+      <param name="siteIp" ordinal="2" paramType="SCALAR" sqlType="STRING" type="IN"/>
+      <param name="amount" ordinal="3" paramType="SCALAR" sqlType="INTEGER" type="IN"/>
+      <param name="year" ordinal="4" paramType="SCALAR" sqlType="STRING" type="IN"/>
+   </query>
+   <query id="select_with_key_monthlyusage_query" useConfig="default">
+      <sql>SELECT userIp, siteIp, amount, month FROM monthlyusage WHERE month=?</sql>
+      <param name="month" ordinal="1" paramType="SCALAR" sqlType="STRING" type="IN"/>
+      <result element="monthlyusageCollection" rowName="monthlyusage">
+         <element column="userIp" name="userIp" xsdType="xs:string"/>
+         <element column="siteIp" name="siteIp" xsdType="xs:string"/>
+         <element column="amount" name="amount" xsdType="xs:integer"/>
+         <element column="month" name="month" xsdType="xs:string"/>
+      </result>
+   </query>
+   <query id="select_with_key_admin_login_query" useConfig="default">
+      <sql>SELECT admin_id, admin_name, admin_password FROM admin_login WHERE admin_id=?</sql>
+      <param name="admin_id" ordinal="1" paramType="SCALAR" sqlType="INTEGER" type="IN"/>
+      <result element="admin_loginCollection" rowName="admin_login">
+         <element column="admin_id" name="admin_id" xsdType="xs:integer"/>
+         <element column="admin_name" name="admin_name" xsdType="xs:string"/>
+         <element column="admin_password" name="admin_password" xsdType="xs:string"/>
+      </result>
+   </query>
+   <query id="update_dailyusage_query" useConfig="default">
+      <sql>UPDATE dailyusage SET userIp=?,siteIp=?,amount=? WHERE day=?</sql>
+      <param name="userIp" ordinal="1" paramType="SCALAR" sqlType="STRING" type="IN"/>
+      <param name="siteIp" ordinal="2" paramType="SCALAR" sqlType="STRING" type="IN"/>
+      <param name="amount" ordinal="3" paramType="SCALAR" sqlType="INTEGER" type="IN"/>
+      <param name="day" ordinal="4" paramType="SCALAR" sqlType="STRING" type="IN"/>
+   </query>
+   <query id="select_with_key_internal_server_query" useConfig="default">
+      <sql>SELECT Server_id, ip_address, description FROM internal_server WHERE Server_id=?</sql>
+      <param name="Server_id" ordinal="1" paramType="SCALAR" sqlType="INTEGER" type="IN"/>
+      <result element="internal_serverCollection" rowName="internal_server">
+         <element column="Server_id" name="Server_id" xsdType="xs:integer"/>
+         <element column="ip_address" name="ip_address" xsdType="xs:string"/>
+         <element column="description" name="description" xsdType="xs:string"/>
+      </result>
+   </query>
+   <query id="update_yearlyusage_query" useConfig="default">
+      <sql>UPDATE yearlyusage SET userIp=?,amount=?,year=? WHERE siteIp=?</sql>
+      <param name="userIp" ordinal="1" paramType="SCALAR" sqlType="STRING" type="IN"/>
+      <param name="amount" ordinal="2" paramType="SCALAR" sqlType="INTEGER" type="IN"/>
+      <param name="year" ordinal="3" paramType="SCALAR" sqlType="STRING" type="IN"/>
+      <param name="siteIp" ordinal="4" paramType="SCALAR" sqlType="STRING" type="IN"/>
+   </query>
+   <query id="delete_callLogEntries_query" useConfig="default">
+      <sql>DELETE FROM callLogEntries WHERE destIp=?</sql>
+      <param name="destIp" ordinal="1" paramType="SCALAR" sqlType="STRING" type="IN"/>
+   </query>
+   <query id="insert_hourlyusage_query" useConfig="default">
+      <sql>INSERT INTO hourlyusage(userIp,siteIp,amount,day,hour) VALUES(?,?,?,?,?)</sql>
+      <param name="userIp" ordinal="1" paramType="SCALAR" sqlType="STRING" type="IN"/>
+      <param name="siteIp" ordinal="2" paramType="SCALAR" sqlType="STRING" type="IN"/>
+      <param name="amount" ordinal="3" paramType="SCALAR" sqlType="INTEGER" type="IN"/>
+      <param name="day" ordinal="4" paramType="SCALAR" sqlType="STRING" type="IN"/>
+      <param name="hour" ordinal="5" paramType="SCALAR" sqlType="STRING" type="IN"/>
+   </query>
+   <query id="select_all_user_query" useConfig="default">
+      <sql>SELECT user_id, full_name, user_name, mac_address, ip_address FROM user</sql>
+      <result element="userCollection" rowName="user">
+         <element column="user_id" name="user_id" xsdType="xs:integer"/>
+         <element column="full_name" name="full_name" xsdType="xs:string"/>
+         <element column="user_name" name="user_name" xsdType="xs:string"/>
+         <element column="mac_address" name="mac_address" xsdType="xs:string"/>
+         <element column="ip_address" name="ip_address" xsdType="xs:string"/>
+      </result>
+   </query>
+   <query id="select_all_callLogEntries_query" useConfig="default">
+      <sql>SELECT callingPartyNumber, originIp, CalledPartyNumber, destIp, duration, timesta FROM callLogEntries</sql>
+      <result element="callLogEntriesCollection" rowName="callLogEntries">
+         <element column="callingPartyNumber" name="callingPartyNumber" xsdType="xs:string"/>
+         <element column="originIp" name="originIp" xsdType="xs:string"/>
+         <element column="CalledPartyNumber" name="CalledPartyNumber" xsdType="xs:string"/>
+         <element column="destIp" name="destIp" xsdType="xs:string"/>
+         <element column="duration" name="duration" xsdType="xs:integer"/>
+         <element column="timesta" name="timesta" xsdType="xs:string"/>
+      </result>
+   </query>
+   <query id="update_weeklyusage_query" useConfig="default">
+      <sql>UPDATE weeklyusage SET userIp=?,amount=?,year=?,week=? WHERE siteIp=?</sql>
+      <param name="userIp" ordinal="1" paramType="SCALAR" sqlType="STRING" type="IN"/>
+      <param name="amount" ordinal="2" paramType="SCALAR" sqlType="INTEGER" type="IN"/>
+      <param name="year" ordinal="3" paramType="SCALAR" sqlType="INTEGER" type="IN"/>
+      <param name="week" ordinal="4" paramType="SCALAR" sqlType="INTEGER" type="IN"/>
+      <param name="siteIp" ordinal="5" paramType="SCALAR" sqlType="STRING" type="IN"/>
+   </query>
+   <query id="update_admin_login_query" useConfig="default">
+      <sql>UPDATE admin_login SET admin_name=?,admin_password=? WHERE admin_id=?</sql>
+      <param name="admin_name" ordinal="1" paramType="SCALAR" sqlType="STRING" type="IN"/>
+      <param name="admin_password" ordinal="2" paramType="SCALAR" sqlType="STRING" type="IN"/>
+      <param name="admin_id" ordinal="3" paramType="SCALAR" sqlType="INTEGER" type="IN"/>
+   </query>
+   <query id="insert_user_query" useConfig="default">
+      <sql>INSERT INTO user(full_name,user_name,mac_address,ip_address) VALUES(?,?,?,?)</sql>
+      <param name="full_name" ordinal="1" paramType="SCALAR" sqlType="STRING" type="IN"/>
+      <param name="user_name" ordinal="2" paramType="SCALAR" sqlType="STRING" type="IN"/>
+      <param name="mac_address" ordinal="3" paramType="SCALAR" sqlType="STRING" type="IN"/>
+      <param name="ip_address" ordinal="4" paramType="SCALAR" sqlType="STRING" type="IN"/>
+   </query>
+   <query id="insert_dailyusage_query" useConfig="default">
+      <sql>INSERT INTO dailyusage(userIp,siteIp,amount,day) VALUES(?,?,?,?)</sql>
+      <param name="userIp" ordinal="1" paramType="SCALAR" sqlType="STRING" type="IN"/>
+      <param name="siteIp" ordinal="2" paramType="SCALAR" sqlType="STRING" type="IN"/>
+      <param name="amount" ordinal="3" paramType="SCALAR" sqlType="INTEGER" type="IN"/>
+      <param name="day" ordinal="4" paramType="SCALAR" sqlType="STRING" type="IN"/>
+   </query>
+   <query id="delete_yearlyusage_query" useConfig="default">
+      <sql>DELETE FROM yearlyusage WHERE siteIp=?</sql>
+      <param name="siteIp" ordinal="1" paramType="SCALAR" sqlType="STRING" type="IN"/>
+   </query>
+   <query id="delete_admin_login_query" useConfig="default">
+      <sql>DELETE FROM admin_login WHERE admin_id=?</sql>
+      <param name="admin_id" ordinal="1" paramType="SCALAR" sqlType="INTEGER" type="IN"/>
+   </query>
+   <query id="delete_monthlyusage_query" useConfig="default">
+      <sql>DELETE FROM monthlyusage WHERE month=?</sql>
+      <param name="month" ordinal="1" paramType="SCALAR" sqlType="STRING" type="IN"/>
+   </query>
+   <query id="insert_callLogEntries_query" useConfig="default">
+      <sql>INSERT INTO callLogEntries(callingPartyNumber,originIp,CalledPartyNumber,destIp,duration,timesta) VALUES(?,?,?,?,?,?)</sql>
+      <param name="callingPartyNumber" ordinal="1" paramType="SCALAR" sqlType="STRING" type="IN"/>
+      <param name="originIp" ordinal="2" paramType="SCALAR" sqlType="STRING" type="IN"/>
+      <param name="CalledPartyNumber" ordinal="3" paramType="SCALAR" sqlType="STRING" type="IN"/>
+      <param name="destIp" ordinal="4" paramType="SCALAR" sqlType="STRING" type="IN"/>
+      <param name="duration" ordinal="5" paramType="SCALAR" sqlType="INTEGER" type="IN"/>
+      <param name="timesta" ordinal="6" paramType="SCALAR" sqlType="STRING" type="IN"/>
+   </query>
+   <query id="insert_monthlyusage_query" useConfig="default">
+      <sql>INSERT INTO monthlyusage(userIp,siteIp,amount,month) VALUES(?,?,?,?)</sql>
+      <param name="userIp" ordinal="1" paramType="SCALAR" sqlType="STRING" type="IN"/>
+      <param name="siteIp" ordinal="2" paramType="SCALAR" sqlType="STRING" type="IN"/>
+      <param name="amount" ordinal="3" paramType="SCALAR" sqlType="INTEGER" type="IN"/>
+      <param name="month" ordinal="4" paramType="SCALAR" sqlType="STRING" type="IN"/>
+   </query>
+   <query id="update_monthlyusage_query" useConfig="default">
+      <sql>UPDATE monthlyusage SET userIp=?,siteIp=?,amount=? WHERE month=?</sql>
+      <param name="userIp" ordinal="1" paramType="SCALAR" sqlType="STRING" type="IN"/>
+      <param name="siteIp" ordinal="2" paramType="SCALAR" sqlType="STRING" type="IN"/>
+      <param name="amount" ordinal="3" paramType="SCALAR" sqlType="INTEGER" type="IN"/>
+      <param name="month" ordinal="4" paramType="SCALAR" sqlType="STRING" type="IN"/>
+   </query>
+   <query id="select_all_weeklyusage_query" useConfig="default">
+      <sql>SELECT userIp, siteIp, amount, year, week FROM weeklyusage</sql>
+      <result element="weeklyusageCollection" rowName="weeklyusage">
+         <element column="userIp" name="userIp" xsdType="xs:string"/>
+         <element column="siteIp" name="siteIp" xsdType="xs:string"/>
+         <element column="amount" name="amount" xsdType="xs:integer"/>
+         <element column="year" name="year" xsdType="xs:integer"/>
+         <element column="week" name="week" xsdType="xs:integer"/>
+      </result>
+   </query>
+   <query id="insert_internal_server_query" useConfig="default">
+      <sql>INSERT INTO internal_server(ip_address,description) VALUES(?,?)</sql>
+      <param name="ip_address" ordinal="1" paramType="SCALAR" sqlType="STRING" type="IN"/>
+      <param name="description" ordinal="2" paramType="SCALAR" sqlType="STRING" type="IN"/>
+   </query>
+   <query id="delete_weeklyusage_query" useConfig="default">
+      <sql>DELETE FROM weeklyusage WHERE siteIp=?</sql>
+      <param name="siteIp" ordinal="1" paramType="SCALAR" sqlType="STRING" type="IN"/>
+   </query>
+   <query id="insert_weeklyusage_query" useConfig="default">
+      <sql>INSERT INTO weeklyusage(userIp,siteIp,amount,year,week) VALUES(?,?,?,?,?)</sql>
+      <param name="userIp" ordinal="1" paramType="SCALAR" sqlType="STRING" type="IN"/>
+      <param name="siteIp" ordinal="2" paramType="SCALAR" sqlType="STRING" type="IN"/>
+      <param name="amount" ordinal="3" paramType="SCALAR" sqlType="INTEGER" type="IN"/>
+      <param name="year" ordinal="4" paramType="SCALAR" sqlType="INTEGER" type="IN"/>
+      <param name="week" ordinal="5" paramType="SCALAR" sqlType="INTEGER" type="IN"/>
+   </query>
+   <query id="select_with_key_callLogEntries_query" useConfig="default">
+      <sql>SELECT callingPartyNumber, originIp, CalledPartyNumber, destIp, duration, timesta FROM callLogEntries WHERE destIp=?</sql>
+      <param name="destIp" ordinal="1" paramType="SCALAR" sqlType="STRING" type="IN"/>
+      <result element="callLogEntriesCollection" rowName="callLogEntries">
+         <element column="callingPartyNumber" name="callingPartyNumber" xsdType="xs:string"/>
+         <element column="originIp" name="originIp" xsdType="xs:string"/>
+         <element column="CalledPartyNumber" name="CalledPartyNumber" xsdType="xs:string"/>
+         <element column="destIp" name="destIp" xsdType="xs:string"/>
+         <element column="duration" name="duration" xsdType="xs:integer"/>
+         <element column="timesta" name="timesta" xsdType="xs:string"/>
+      </result>
+   </query>
+   <operation name="update_user_operation">
+      <call-query href="update_user_query">
+         <with-param name="mac_address" query-param="mac_address"/>
+         <with-param name="user_name" query-param="user_name"/>
+         <with-param name="ip_address" query-param="ip_address"/>
+         <with-param name="user_id" query-param="user_id"/>
+         <with-param name="full_name" query-param="full_name"/>
+      </call-query>
+   </operation>
+   <operation name="select_all_callLogEntries_operation">
+      <call-query href="select_all_callLogEntries_query"/>
+   </operation>
+   <operation name="delete_internal_server_operation">
+      <call-query href="delete_internal_server_query">
+         <with-param name="Server_id" query-param="Server_id"/>
+      </call-query>
+   </operation>
+   <operation name="select_with_key_weeklyusage_operation">
+      <call-query href="select_with_key_weeklyusage_query">
+         <with-param name="siteIp" query-param="siteIp"/>
+      </call-query>
+   </operation>
+   <operation name="select_all_monthlyusage_operation">
+      <call-query href="select_all_monthlyusage_query"/>
+   </operation>
+   <operation name="select_with_key_user_operation">
+      <call-query href="select_with_key_user_query">
+         <with-param name="user_id" query-param="user_id"/>
+      </call-query>
+   </operation>
+   <operation name="update_weeklyusage_operation">
+      <call-query href="update_weeklyusage_query">
+         <with-param name="amount" query-param="amount"/>
+         <with-param name="userIp" query-param="userIp"/>
+         <with-param name="siteIp" query-param="siteIp"/>
+         <with-param name="year" query-param="year"/>
+         <with-param name="week" query-param="week"/>
+      </call-query>
+   </operation>
+   <operation name="insert_callLogEntries_operation">
+      <call-query href="insert_callLogEntries_query">
+         <with-param name="duration" query-param="duration"/>
+         <with-param name="callingPartyNumber" query-param="callingPartyNumber"/>
+         <with-param name="originIp" query-param="originIp"/>
+         <with-param name="timesta" query-param="timesta"/>
+         <with-param name="destIp" query-param="destIp"/>
+         <with-param name="CalledPartyNumber" query-param="CalledPartyNumber"/>
+      </call-query>
+   </operation>
+   <operation name="select_all_dailyusage_operation">
+      <call-query href="select_all_dailyusage_query"/>
+   </operation>
+   <operation name="delete_admin_login_operation">
+      <call-query href="delete_admin_login_query">
+         <with-param name="admin_id" query-param="admin_id"/>
+      </call-query>
+   </operation>
+   <operation name="insert_weeklyusage_operation">
+      <call-query href="insert_weeklyusage_query">
+         <with-param name="amount" query-param="amount"/>
+         <with-param name="userIp" query-param="userIp"/>
+         <with-param name="siteIp" query-param="siteIp"/>
+         <with-param name="year" query-param="year"/>
+         <with-param name="week" query-param="week"/>
+      </call-query>
+   </operation>
+   <operation name="update_hourlyusage_operation">
+      <call-query href="update_hourlyusage_query">
+         <with-param name="amount" query-param="amount"/>
+         <with-param name="userIp" query-param="userIp"/>
+         <with-param name="siteIp" query-param="siteIp"/>
+         <with-param name="day" query-param="day"/>
+         <with-param name="hour" query-param="hour"/>
+      </call-query>
+   </operation>
+   <operation name="update_internal_server_operation">
+      <call-query href="update_internal_server_query">
+         <with-param name="ip_address" query-param="ip_address"/>
+         <with-param name="description" query-param="description"/>
+         <with-param name="Server_id" query-param="Server_id"/>
+      </call-query>
+   </operation>
+   <operation name="insert_user_operation">
+      <call-query href="insert_user_query">
+         <with-param name="mac_address" query-param="mac_address"/>
+         <with-param name="user_name" query-param="user_name"/>
+         <with-param name="ip_address" query-param="ip_address"/>
+         <with-param name="full_name" query-param="full_name"/>
+      </call-query>
+   </operation>
+   <operation name="delete_callLogEntries_operation">
+      <call-query href="delete_callLogEntries_query">
+         <with-param name="destIp" query-param="destIp"/>
+      </call-query>
+   </operation>
+   <operation name="select_all_hourlyusage_operation">
+      <call-query href="select_all_hourlyusage_query"/>
+   </operation>
+   <operation name="delete_weeklyusage_operation">
+      <call-query href="delete_weeklyusage_query">
+         <with-param name="siteIp" query-param="siteIp"/>
+      </call-query>
+   </operation>
+   <operation name="delete_monthlyusage_operation">
+      <call-query href="delete_monthlyusage_query">
+         <with-param name="month" query-param="month"/>
+      </call-query>
+   </operation>
+   <operation name="select_all_user_operation">
+      <call-query href="select_all_user_query"/>
+   </operation>
+   <operation name="insert_monthlyusage_operation">
+      <call-query href="insert_monthlyusage_query">
+         <with-param name="amount" query-param="amount"/>
+         <with-param name="userIp" query-param="userIp"/>
+         <with-param name="month" query-param="month"/>
+         <with-param name="siteIp" query-param="siteIp"/>
+      </call-query>
+   </operation>
+   <operation name="insert_hourlyusage_operation">
+      <call-query href="insert_hourlyusage_query">
+         <with-param name="amount" query-param="amount"/>
+         <with-param name="userIp" query-param="userIp"/>
+         <with-param name="siteIp" query-param="siteIp"/>
+         <with-param name="hour" query-param="hour"/>
+         <with-param name="day" query-param="day"/>
+      </call-query>
+   </operation>
+   <operation name="delete_yearlyusage_operation">
+      <call-query href="delete_yearlyusage_query">
+         <with-param name="siteIp" query-param="siteIp"/>
+      </call-query>
+   </operation>
+   <operation name="select_all_admin_login_operation">
+      <call-query href="select_all_admin_login_query"/>
+   </operation>
+   <operation name="select_all_internal_server_operation">
+      <call-query href="select_all_internal_server_query"/>
+   </operation>
+   <operation name="update_yearlyusage_operation">
+      <call-query href="update_yearlyusage_query">
+         <with-param name="amount" query-param="amount"/>
+         <with-param name="userIp" query-param="userIp"/>
+         <with-param name="siteIp" query-param="siteIp"/>
+         <with-param name="year" query-param="year"/>
+      </call-query>
+   </operation>
+   <operation name="select_with_key_admin_login_operation">
+      <call-query href="select_with_key_admin_login_query">
+         <with-param name="admin_id" query-param="admin_id"/>
+      </call-query>
+   </operation>
+   <operation name="select_with_key_internal_server_operation">
+      <call-query href="select_with_key_internal_server_query">
+         <with-param name="Server_id" query-param="Server_id"/>
+      </call-query>
+   </operation>
+   <operation name="select_with_key_yearlyusage_operation">
+      <call-query href="select_with_key_yearlyusage_query">
+         <with-param name="siteIp" query-param="siteIp"/>
+      </call-query>
+   </operation>
+   <operation name="delete_dailyusage_operation">
+      <call-query href="delete_dailyusage_query">
+         <with-param name="day" query-param="day"/>
+      </call-query>
+   </operation>
+   <operation name="select_with_key_callLogEntries_operation">
+      <call-query href="select_with_key_callLogEntries_query">
+         <with-param name="destIp" query-param="destIp"/>
+      </call-query>
+   </operation>
+   <operation name="update_callLogEntries_operation">
+      <call-query href="update_callLogEntries_query">
+         <with-param name="duration" query-param="duration"/>
+         <with-param name="callingPartyNumber" query-param="callingPartyNumber"/>
+         <with-param name="originIp" query-param="originIp"/>
+         <with-param name="timesta" query-param="timesta"/>
+         <with-param name="destIp" query-param="destIp"/>
+         <with-param name="CalledPartyNumber" query-param="CalledPartyNumber"/>
+      </call-query>
+   </operation>
+   <operation name="update_dailyusage_operation">
+      <call-query href="update_dailyusage_query">
+         <with-param name="amount" query-param="amount"/>
+         <with-param name="userIp" query-param="userIp"/>
+         <with-param name="siteIp" query-param="siteIp"/>
+         <with-param name="day" query-param="day"/>
+      </call-query>
+   </operation>
+   <operation name="delete_user_operation">
+      <call-query href="delete_user_query">
+         <with-param name="user_id" query-param="user_id"/>
+      </call-query>
+   </operation>
+   <operation name="update_admin_login_operation">
+      <call-query href="update_admin_login_query">
+         <with-param name="admin_password" query-param="admin_password"/>
+         <with-param name="admin_id" query-param="admin_id"/>
+         <with-param name="admin_name" query-param="admin_name"/>
+      </call-query>
+   </operation>
+   <operation name="insert_internal_server_operation">
+      <call-query href="insert_internal_server_query">
+         <with-param name="ip_address" query-param="ip_address"/>
+         <with-param name="description" query-param="description"/>
+      </call-query>
+   </operation>
+   <operation name="insert_dailyusage_operation">
+      <call-query href="insert_dailyusage_query">
+         <with-param name="amount" query-param="amount"/>
+         <with-param name="userIp" query-param="userIp"/>
+         <with-param name="siteIp" query-param="siteIp"/>
+         <with-param name="day" query-param="day"/>
+      </call-query>
+   </operation>
+   <operation name="select_all_yearlyusage_operation">
+      <call-query href="select_all_yearlyusage_query"/>
+   </operation>
+   <operation name="select_with_key_monthlyusage_operation">
+      <call-query href="select_with_key_monthlyusage_query">
+         <with-param name="month" query-param="month"/>
+      </call-query>
+   </operation>
+   <operation name="update_monthlyusage_operation">
+      <call-query href="update_monthlyusage_query">
+         <with-param name="amount" query-param="amount"/>
+         <with-param name="userIp" query-param="userIp"/>
+         <with-param name="month" query-param="month"/>
+         <with-param name="siteIp" query-param="siteIp"/>
+      </call-query>
+   </operation>
+   <operation name="select_all_weeklyusage_operation">
+      <call-query href="select_all_weeklyusage_query"/>
+   </operation>
+   <operation name="insert_admin_login_operation">
+      <call-query href="insert_admin_login_query">
+         <with-param name="admin_password" query-param="admin_password"/>
+         <with-param name="admin_name" query-param="admin_name"/>
+      </call-query>
+   </operation>
+   <operation name="select_with_key_dailyusage_operation">
+      <call-query href="select_with_key_dailyusage_query">
+         <with-param name="day" query-param="day"/>
+      </call-query>
+   </operation>
+   <operation name="insert_yearlyusage_operation">
+      <call-query href="insert_yearlyusage_query">
+         <with-param name="amount" query-param="amount"/>
+         <with-param name="userIp" query-param="userIp"/>
+         <with-param name="siteIp" query-param="siteIp"/>
+         <with-param name="year" query-param="year"/>
+      </call-query>
+   </operation>
+   <operation name="delete_hourlyusage_operation">
+      <call-query href="delete_hourlyusage_query">
+         <with-param name="day" query-param="day"/>
+      </call-query>
+   </operation>
+   <operation name="select_with_key_hourlyusage_operation">
+      <call-query href="select_with_key_hourlyusage_query">
+         <with-param name="day" query-param="day"/>
+      </call-query>
+   </operation>
+</data>

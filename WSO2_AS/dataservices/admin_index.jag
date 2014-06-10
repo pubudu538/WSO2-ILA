@@ -1,0 +1,460 @@
+<%
+
+     var user_name = session.get("username");
+     var user_role = session.get("role");
+
+//      if(user_name == null){
+
+  //      response.status=307;
+  //      response.addHeader('Location','index.jag');
+
+  // }
+
+var header = request.getHeader("X-JWT-Assertion");
+var log = new Log();
+// Create Base64 Object
+var Base64 = require('admin_portal/modules/base64.js');
+
+if(header !=null){
+                  log.info("ssssss==="+header);
+                var jwtAssertions = header.split("."); //JWT header by default contains three '.' separated sections
+                    var jsonString = Base64.decode(jwtAssertions[1]);
+
+                    jsonString = jsonString.replace("http://wso2.org/claims/emailaddress", "email");
+                    jsonString = jsonString.replace("http://wso2.org/claims/role", "roles");
+
+                    var obj = parse(jsonString);
+                    var email = obj.email;
+                    var roles = obj.roles;
+
+                    var username = email.split("@")[0];
+                    log.info("=========usename===="+username);
+                    var url  = "https://localhost:9445/services/LogAnalyzerDataService2/authenticate/admin/"+username;
+
+                    var type = "application/json";
+                    var headers = {"Accept": "application/json"};
+
+                    var result=get(url,"",headers);
+                    var data=result.data;
+
+                    var data=parse(data);
+
+                    var elementArray=data["AdmininfoCollection"];
+                    var re3=elementArray["Admininfo"];
+                                                         
+                            if(re3 != null){
+                            log.info("$$$$$$$$$$$$$$$$$$$-"+username);
+                            session.put("username",username);
+                      //            response.sendRedirect("admin_index.jag");
+     user_name = username;
+     user_role = "user";
+
+
+                            }else{
+
+log.info("-------------------"+username);
+                                            session.put("username",username);
+log.info("======qqqqqqqq"+session.get("username"));
+                                        session.put("role", "user");
+                             //           response.sendRedirect("user_portal/home.jag");
+ user_name = username;
+ user_role = "user";
+
+                            }
+
+
+}
+
+
+
+%>
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!-- saved from url=(0047)https://10.100.4.37:9443/carbon/admin/login.jsp -->
+<html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    
+    
+    <title>WSO2 Management Console</title>
+    
+     <link href="admin_portal/css/global.css" rel="stylesheet" type="text/css" media="all">
+
+    <link href="admin_portal/images/registry_styles_ajaxprocessor.jsp" rel="stylesheet" type="text/css" media="all">
+
+    <link href="admin_portal/css/main.css" rel="stylesheet" type="text/css" media="all">
+    <link href="admin_portal/css/jqueryui-themeroller.css" rel="stylesheet" type="text/css" media="all">
+    <link href="admin_portal/css/dialog.css" rel="stylesheet" type="text/css" media="all">
+    <link rel="stylesheet" href="admin_portal/css/carbonFormStyles.css">
+    <!--[if gte IE 8]>
+    <link href="../dialog/css/dialog-ie8.css" rel="stylesheet" type="text/css" media="all"/>        
+    <![endif]-->
+    <!--[if gte IE 7]>
+    <link href="../dialog/css/dialog-ie8.css" rel="stylesheet" type="text/css" media="all"/>
+    <![endif]-->
+    <link rel="icon" href="admin_portal/images/favicon.ico" type="image/x-icon">
+    <link rel="shortcut icon" href="admin_portal/images/favicon.ico" type="image/x-icon">
+
+    <script type="text/javascript" src="admin_portal/js/jquery-1.5.2.min.js"></script><style type="text/css"></style>
+    <script type="text/javascript" src="admin_portal/js/jquery.form.js"></script>
+    <script type="text/javascript" src="admin_portal/js/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="admin_portal/js/jquery.validate.js"></script>    
+    <script type="text/javascript" src="admin_portal/js/jquery.cookie.js"></script>
+    <script type="text/javascript" src="admin_portal/js/jquery.ui.core.min.js"></script>
+    <script type="text/javascript" src="admin_portal/js/jquery.ui.widget.min.js"></script>
+    <script type="text/javascript" src="admin_portal/js/jquery.ui.tabs.min.js"></script>
+    <script type="text/javascript" src="admin_portal/js/main.js"></script>
+    <script type="text/javascript" src="admin_portal/js/WSRequest.js"></script>
+    <script type="text/javascript" src="admin_portal/js/cookies.js"></script>
+
+    <script type="text/javascript" src="admin_portal/js/customControls.js"></script>
+
+   
+	
+	
+</head>
+<%
+    var status = request.getParameter("status");
+
+	if(status == "1"){
+		print("<body onload=\"timer=setTimeout(function(){ window.location='index.jag';}, 1800)\" >");
+	}else{
+		print("<body>");
+	}
+
+%>
+
+
+<noscript>
+&lt;div class="something-wrong"&gt;
+	&lt;div class="title"&gt;JavaScript is disabled on your browser&lt;/div&gt;
+	&lt;div class="content"&gt;Please enable JavaScript or upgrade to a JavaScript-capable browser to use WSO2 Products.&lt;/div&gt;
+&lt;/div&gt;
+</noscript>
+<!--[if lte IE 6]>
+<div class="something-wrong">
+	<div class="title">Did you know that your Internet Explorer is out of date?</div>
+	<div class="content">To get the best possible experience using our website we recommend that you upgrade to a newer version.</div>
+</div>
+<![endif]-->
+
+<div id="dcontainer"></div>
+<script type="text/javascript" src="js/login_js/dialog.js"></script>
+
+<!-- JS imports for collapsible menu -->
+<script src="js/login_js/yahoo-dom-event.js" type="text/javascript"></script>
+<script src="js/login_js/animation-min.js" type="text/javascript"></script>
+<script src="js/login_js/template.js" type="text/javascript"></script>
+<script src="js/login_js/yahoo-min.js" type="text/javascript"></script>
+<script src="js/login_js/selector-min.js" type="text/javascript"></script>
+
+<table id="main-table" border="0" cellspacing="0">
+    <tbody><tr>
+        <td id="header" colspan="3">
+
+
+
+
+
+
+
+
+
+<!--[IF IE 7]>
+	<style>
+		div#header-div div.right-links{
+			position:absolute;
+		}
+	</style>
+<![endif]-->
+
+
+    <div id="header-div">
+        <div class="right-logo">Management Console</div>
+
+        <div class="middle-ad">
+            
+
+
+
+
+        </div>
+        <div class="header-links">
+		<div class="right-links">           
+			<ul>
+		                
+		                <li class="right">
+		                    <a href="#">Sign-in</a>
+		                </li>
+		                
+		                <li class="middle">|</li>
+		                <li class="middle">
+		                    <a target="_blank" href="#">Docs</a>
+		                </li>
+				<li class="middle">|</li>
+				
+		                <li class="left">
+		                    <a target="_blank" href="about.jag">About</a>
+		                </li>
+		            </ul>
+		</div>
+        </div>
+    </div>
+
+
+        </td>
+    </tr>
+    <tr>
+        <td class="vertical-menu-container" id="vertical-menu-container" style="display: none;">
+            <div id="menu-panel-button0"></div>
+            <div id="menu-panel-button1" class="menu-panel-buttons"></div>
+            <div id="menu-panel-button2" class="menu-panel-buttons"></div>
+            <div id="menu-panel-button3" class="menu-panel-buttons"></div>
+            <div id="menu-panel-button4" class="menu-panel-buttons"></div>
+            <div id="menu-panel-button5" class="menu-panel-buttons"></div>
+            <div id="menu-panel-button_dummy" style="display:none"></div>
+        </td>
+        <td id="menu-panel" valign="top" style="display: none;">
+            <table id="menu-table" border="0" cellspacing="0">
+                <tbody><tr>
+                    <td id="region1">
+
+
+
+
+
+
+
+
+        <div id="menu"> <ul class="main"><li><a href="#" class="menu-home">Home</a></li> </ul></div>
+
+
+</td>
+                </tr>
+                <tr>
+                    <td id="region2">
+
+
+
+        <div id="menu"> <ul class="main"> </ul></div>
+</td>
+                </tr>
+                <tr>
+                    <td id="region3">
+
+
+
+        <div id="menu"> <ul class="main"> </ul></div>
+
+</td>
+                </tr>
+                <tr>
+                    <td id="region4">
+
+
+
+        <div id="menu"> <ul class="main"> </ul></div>
+
+</td>
+                </tr>
+                <tr>
+                    <td id="region5">
+
+
+
+        <div id="menu"> <ul class="main"> </ul></div>
+</td>
+                </tr>
+                <tr>
+                    <td><img src="admin_portal/images/1px.gif" width="225px" height="1px"></td>
+                </tr>
+            </tbody></table>
+        </td>
+        <td id="middle-content">
+            <table id="content-table" border="0" cellspacing="0">
+                <tbody><tr>
+                    <td id="page-header-links">
+
+
+
+
+
+	<table class="page-header-links-table" cellspacing="0">
+		<tbody><tr>
+			<td class="breadcrumbs">
+			<table class="breadcrumb-table" cellspacing="0">
+				<tbody><tr>								 
+				    <td>
+					    <div id="breadcrumb-div"></div>
+                    </td>
+				</tr>
+
+			</tbody></table>
+			</td>
+
+			<td class="page-header-help"><a href="#" target="_blank">Help</a></td>
+
+		</tr>
+	</tbody></table>
+</td>
+                </tr>
+                <tr>
+                    <td id="body">
+                        <img src="admin_portal/images/1px.gif" width="735px" height="1px">
+                        
+
+<script type="text/javascript">
+    var msgId;
+    
+    msgId = 'MSG13891711138190.21127376189444314';
+    
+</script>
+
+
+     <script type="text/javascript">
+
+        function doValidation() {
+            var reason = "";
+
+            var userNameEmpty = isEmpty("username");
+            var passwordEmpty = isEmpty("password");
+
+            if (userNameEmpty || passwordEmpty) {
+                CARBON.showWarningDialog('Please enter a valid user name and a password.');
+                document.getElementById('txtUserName').focus();
+                return false;
+            }
+
+            return true;
+        }
+
+    </script>
+
+    
+     <script type="text/javascript">
+    	function getSafeText(text){
+    		text = text.replace(/</g,'&lt;');
+    		return text.replace(/>/g,'&gt');
+    	}
+    
+        function checkInputs(){
+        	var loginForm = document.getElementById('loginForm');
+        	var backendUrl = document.getElementById("txtbackendURL");
+        	var username = document.getElementById("txtUserName");
+        	
+        	backendUrl.value = getSafeText(backendUrl.value);
+        	username.value = getSafeText(username.value);
+        	loginForm.submit();
+        }
+    </script>
+    <div style="margin-bottom:185px;" id="middle" >
+        <table cellspacing="0" width="100%">
+            <tbody><tr>
+
+                <td width="20%">
+                    <div id="loginbox">
+                        <h2>Sign-in</h2>
+
+<%
+
+var status = request.getParameter("status");
+
+if(status == "1"){
+    log.info("redirection----------------");
+   response.sendRedirect("user_portal/home.jag");
+
+
+	print(<p style="color:red;">Invalid Login Attempt Check the Username and Password or Your Role. If you are not an Admin Please Login from <a href="https://www.facebook.com">here</a>.</p> );
+
+
+
+}
+		
+%>
+                        <form action="admin_portal/functions/loginValidate.jag" onsubmit="doValidation();" method="POST" >
+                            <table>
+                                 
+                                <tbody><tr>
+                                    <td>
+                                        <label for="txtUserName">Username &nbsp;: </label>
+                                    </td>
+                                    <td>
+                                       <% var user_name = session.get("username"); print(user_name); %>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <label for="txtPassword">Password &nbsp; &nbsp;: </label>
+                                    </td>
+                                    <td>
+                                        ***************
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        
+                                    </td>
+                                    <td>
+                                    	<input type="checkbox" name="asAdmin" value="logasadmin" tabindex="5">
+                                        <label for="asAdmin">Log me as an Admin</label>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>&nbsp;</td>
+                                    <td>
+                                        <input type="submit" value="Sign-in" class="button" tabindex="3">
+                                    </td>
+                                </tr>
+                            </tbody></table>
+                        </form>
+                    </div>
+                </td>
+            </tr>
+        </tbody></table>
+    </div>
+    <script type="text/javascript">
+        function init(loginStatus) {
+            // intialize the code and call to the back end
+            /*wso2.wsf.Util.initURLs();*/
+            /*Initialize the XSLT cache*/
+            /*wso2.wsf.XSLTHelper.init();*/
+
+            if (loginStatus == 'true') {
+            } else if (loginStatus == 'null') {
+            } else if (loginStatus == 'false') {
+                wso2.wsf.Util.alertWarning("Login failed.Please recheck the user name and password and try again")
+            } 
+        }
+        document.getElementById('txtUserName').focus();
+    </script>
+
+
+
+                    </td>
+                </tr>
+            </tbody></table>
+        </td>
+    </tr>
+    <tr>
+        <td id="footer" colspan="3">
+
+<div id="footer-div">
+	<div class="footer-content">
+		<div class="copyright">
+		    © 2005 - 2013 WSO2 Inc. All Rights Reserved.
+		</div>
+		<!--div class="poweredby">
+		</div-->
+	</div>
+</div>
+                        
+</td>
+    </tr>
+</tbody></table>
+<script type="text/javascript">
+if (Function('/*@cc_on return document.documentMode===10@*/')()){
+    document.documentElement.className+=' ie10';
+}
+</script>
+
+
+
+</body></html>
