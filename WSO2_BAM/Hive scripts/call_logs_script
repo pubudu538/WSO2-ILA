@@ -1,0 +1,30 @@
+DROP TABLE callLog;
+DROP TABLE callLogEntries;
+
+
+CREATE EXTERNAL TABLE IF NOT EXISTS callLog
+	(id STRING, callingPartyNumber STRING, originIp STRING, CalledPartyNumberp STRING, destIp STRING,  duration STRING, timesta STRING) 
+	STORED BY 'org.apache.hadoop.hive.cassandra.CassandraStorageHandler'
+	WITH SERDEPROPERTIES ( 
+	"wso2.carbon.datasource.name" = "WSO2BAM_CASSANDRA_DATASOURCE" ,
+	"cassandra.cf.name" = "log_analyzer_call_records_logs" , 
+	"cassandra.columns.mapping" = ":key, payload_callingPartyNumber, payload_originIp, payload_CalledPartyNumber, payload_destIp, payload_duration, payload_timestamp" );	
+ 
+ CREATE EXTERNAL TABLE IF NOT EXISTS callLogEntries(
+	callingPartyNumber STRING, originIp STRING, CalledPartyNumber STRING, destIp STRING,  duration INT, timesta STRING) 
+	STORED BY 'org.wso2.carbon.hadoop.hive.jdbc.storage.JDBCStorageHandler' 
+	TBLPROPERTIES ( 
+    'wso2.carbon.datasource.name'='Log_new',
+	'hive.jdbc.update.on.duplicate' = 'true' , 
+	'hive.jdbc.primary.key.fields' = 'originIp,destIp,timesta' , 
+	'hive.jdbc.table.create.query' = 
+	'CREATE TABLE callLogEntries (callingPartyNumber VARCHAR(20), 
+	originIp CHAR(15), CalledPartyNumber VARCHAR(20),destIp CHAR(15),duration INT,timesta CHAR(17),PRIMARY KEY(originIp,destIp,timesta))' );
+ 
+ 
+ 
+ insert overwrite table callLogEntries 
+	select callingPartyNumber, originIp, calledPartyNumberp, destIp, cast(duration as int), timesta  from callLog	
+	;
+
+                                    

@@ -1,0 +1,40 @@
+drop table to_bam;
+CREATE EXTERNAL TABLE IF NOT EXISTS to_bam (rowKey STRING,Name STRING,Version STRING,Data_Timestamp BIGINT,Nick_Name STRING,Description STRING,payload_UserIp STRING,payload_SiteIp STRING,payload_size BIGINT,payload_timestamp STRING) STORED BY 'org.apache.hadoop.hive.cassandra.CassandraStorageHandler' WITH SERDEPROPERTIES (
+"cassandra.host"="127.0.0.1" ,
+"cassandra.port"="9161" ,
+"cassandra.ks.name"="EVENT_KS" ,
+"cassandra.ks.username"="admin" ,
+"cassandra.ks.password"="admin" ,
+"cassandra.cf.name"="to_bam" ,
+"cassandra.columns.mapping"=":key,Name,Version,Timestamp,Nick_Name,Description,payload_UserIp,payload_SiteIp,payload_size,payload_timestamp");
+set cassandra_original_column_family=to_bam; 
+set cassandra_username=admin; 
+set cassandra_password=admin; 
+create temporary function get_past_date as 'org.wso2.carbon.bam.cassandra.data.archive.udf.GetPastDate';
+drop table to_bam_arch;
+CREATE EXTERNAL TABLE IF NOT EXISTS to_bam_arch (rowKey STRING,Name STRING,Version STRING,Data_Timestamp BIGINT,Nick_Name STRING,Description STRING,payload_UserIp STRING,payload_SiteIp STRING,payload_size BIGINT,payload_timestamp STRING) STORED BY 'org.apache.hadoop.hive.cassandra.CassandraStorageHandler' WITH SERDEPROPERTIES (
+"cassandra.host"="127.0.0.1" ,
+"cassandra.port"="9161" ,
+"cassandra.ks.name"="EVENT_KS" ,
+"cassandra.ks.username"="admin" ,
+"cassandra.ks.password"="admin" ,
+"cassandra.cf.name"="to_bam_arch" ,
+"cassandra.columns.mapping"=":key,Name,Version,Timestamp,Nick_Name,Description,payload_UserIp,payload_SiteIp,payload_size,payload_timestamp");
+insert overwrite table to_bam_arch select * from to_bam where Data_Timestamp < get_past_date('0') AND Version='1.0.0';
+drop table to_bam1_0_0;
+CREATE EXTERNAL TABLE IF NOT EXISTS to_bam1_0_0 (rowKey STRING,Name STRING) STORED BY 'org.apache.hadoop.hive.cassandra.CassandraStorageHandler' WITH SERDEPROPERTIES (
+"cassandra.host"="127.0.0.1" ,
+"cassandra.port"="9161" ,
+"cassandra.ks.name"="EVENT_KS" ,
+"cassandra.ks.username"="admin" ,
+"cassandra.ks.password"="admin" ,
+"cassandra.cf.name"="to_bam1_0_0" ,
+"cassandra.columns.mapping"=":key,Name");
+set column_family_name=to_bam1_0_0; 
+set cassandra_port=9161; 
+set cassandra_host_ip=127.0.0.1; 
+
+insert overwrite table to_bam1_0_0 select rowKey,Name from to_bam where Data_Timestamp < get_past_date('0') AND Version='1.0.0';
+class org.wso2.carbon.bam.cassandra.data.archive.mapred.CassandraRowDeletionAnalyzer;
+
+                                    

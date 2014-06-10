@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<eventFormatter name="emailOut" statistics="disable" trace="disable" xmlns="http://wso2.org/carbon/eventformatter">
+  <from streamName="mail_out" version="1.0.0"/>
+  <mapping customMapping="enable" type="text">
+    <inline>Hi {{full_name}},
+This is a test,
+you are using high bandwidth,Thank You.</inline>
+  </mapping>
+  <to eventAdaptorName="emailNot" eventAdaptorType="email">
+    <property name="email.address">cdwijayarathna@yahoo.com</property>
+    <property name="email.subject">High Bandwidth Warning</property>
+  </to>
+</eventFormatter>

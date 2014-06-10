@@ -1,0 +1,31 @@
+DROP TABLE monthlyusage;
+DROP TABLE yearlyusage;
+
+CREATE EXTERNAL TABLE IF NOT EXISTS monthlyusage(
+	userIp STRING, siteIp STRING,  amount INT, month STRING) 
+	STORED BY 'org.wso2.carbon.hadoop.hive.jdbc.storage.JDBCStorageHandler' 
+	TBLPROPERTIES ( 
+    'wso2.carbon.datasource.name'='Log_new',
+	'hive.jdbc.update.on.duplicate' = 'true' , 
+	'hive.jdbc.primary.key.fields' = 'userIp,siteIp,month' , 
+	'hive.jdbc.table.create.query' = 
+	'CREATE TABLE monthlyusage (userIp CHAR(15) NOT NULL , 
+	siteIp CHAR(15) NOT NULL, amount  INT, month CHAR(7), PRIMARY KEY(userIp,siteIp,month))' );
+	
+CREATE EXTERNAL TABLE IF NOT EXISTS yearlyusage(
+	userIp STRING, siteIp STRING,  amount INT, year STRING) 
+	STORED BY 'org.wso2.carbon.hadoop.hive.jdbc.storage.JDBCStorageHandler' 
+	TBLPROPERTIES ( 
+    'wso2.carbon.datasource.name'='Log_new',
+	'hive.jdbc.update.on.duplicate' = 'true' , 
+	'hive.jdbc.primary.key.fields' = 'userIp,siteIp,year' , 
+	'hive.jdbc.table.create.query' = 
+	'CREATE TABLE yearlyusage (userIp CHAR(15) NOT NULL , 
+	siteIp CHAR(15) NOT NULL, amount  INT, year CHAR(4), PRIMARY KEY(userIp,siteIp,year))' );
+	
+insert overwrite table yearlyusage 
+	select userIp, SiteIp, sum(amount) as amount, SUBSTR(month, 0,4)  from monthlyusage
+	where SUBSTR(month,0,4)==SUBSTR(date_sub(to_date(from_unixtime(unix_timestamp())),1),0,4)
+	group by userIp, SiteIp, SUBSTR(month, 0,4);
+
+                                    

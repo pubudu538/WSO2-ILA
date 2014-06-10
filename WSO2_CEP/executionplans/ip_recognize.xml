@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<executionPlan name="ip_recognize" statistics="disable" trace="disable" xmlns="http://wso2.org/carbon/eventprocessor">
+  <description/>
+  <siddhiConfiguration>
+    <property name="siddhi.persistence.snapshot.time.interval.minutes">0</property>
+    <property name="siddhi.enable.distributed.processing">false</property>
+  </siddhiConfiguration>
+  <importedStreams>
+    <stream as="data" name="org.wso2.default.stream.nout" version="1.0.0"/>
+  </importedStreams>
+  <queryExpressions><![CDATA[from data [SrcIp contains '10.100.' and not (SrcIp contains '.10.100')]
+select DesrIp, rlp:get('74.125.224.72') as str
+insert into s1;
+from s1[not(str == "")]
+select DesrIp, str
+insert into siteOut]]></queryExpressions>
+  <exportedStreams>
+    <stream name="siteOut" passthroughFlow="enable" valueOf="siteOut" version="1.0.0"/>
+  </exportedStreams>
+</executionPlan>

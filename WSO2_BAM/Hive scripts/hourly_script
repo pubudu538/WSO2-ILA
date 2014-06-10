@@ -1,0 +1,32 @@
+DROP TABLE hourlyLogEvent;
+DROP TABLE hourlyusage;
+
+CREATE EXTERNAL TABLE IF NOT EXISTS hourlyLogEvent
+	(id STRING, userIp STRING, siteIp STRING,  size BIGINT, timesta STRING) 
+	STORED BY 'org.apache.hadoop.hive.cassandra.CassandraStorageHandler'
+	WITH SERDEPROPERTIES ( 
+	"wso2.carbon.datasource.name" = "WSO2BAM_CASSANDRA_DATASOURCE" ,
+	"cassandra.cf.name" = "to_bam" , 
+	"cassandra.columns.mapping" = ":key, payload_UserIp, payload_SiteIp, payload_size, payload_timestamp" );	
+
+	
+	
+CREATE EXTERNAL TABLE IF NOT EXISTS hourlyusage(
+	userIp STRING, siteIp STRING,  amount INT, day STRING, hour STRING) 
+	STORED BY 'org.wso2.carbon.hadoop.hive.jdbc.storage.JDBCStorageHandler' 
+	TBLPROPERTIES ( 
+    'wso2.carbon.datasource.name'='Log_new',
+	'hive.jdbc.update.on.duplicate' = 'true' , 
+	'hive.jdbc.primary.key.fields' = 'userIp,siteIp,day,hour' , 
+	'hive.jdbc.table.create.query' = 
+	'CREATE TABLE hourlyusage (userIp CHAR(15), 
+	siteIp CHAR(15), amount INT,day CHAR(10), hour CHAR(2), PRIMARY KEY(userIp,siteIp,day,hour))' ); 
+	
+		
+insert overwrite table hourlyusage 
+	select userIp, siteIp, sum(size), to_date(timesta), hour(timesta)  from hourlyLogEvent	
+	where to_date(timesta) == if(hour(from_unixtime(unix_timestamp()))==0,date_sub(to_date(from_unixtime(unix_timestamp())),1),to_date(from_unixtime(unix_timestamp())))
+	and hour(timesta)== 	if( hour(from_unixtime(unix_timestamp()))==0, 23 ,hour(from_unixtime(unix_timestamp()))-1)
+	group by userIp, SiteIp, to_date(timesta),hour(timesta);
+
+                                    

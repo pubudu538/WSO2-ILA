@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<outputEventAdaptor name="bam_out" statistics="disable" trace="enable"
+  type="wso2event" xmlns="http://wso2.org/carbon/eventadaptormanager">
+  <property name="receiverURL">tcp://192.168.3.25:7611</property>
+  <property name="username">admin</property>
+  <property name="password">admin</property>
+</outputEventAdaptor>

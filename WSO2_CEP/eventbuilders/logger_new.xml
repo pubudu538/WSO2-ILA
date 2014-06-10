@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<eventBuilder name="logger_new" statistics="disable" trace="enable" xmlns="http://wso2.org/carbon/eventbuilder">
+    <from eventAdaptorName="DefaultWSO2EventInputAdaptor" eventAdaptorType="wso2event">
+        <property name="stream">org.wso2.log_analyzer.netflow.info1</property>
+        <property name="version">1.0.0</property>
+    </from>
+    <mapping customMapping="enable" type="wso2event">
+        <property>
+            <from dataType="meta" name="referer"/>
+            <to name="meta_referer" type="string"/>
+        </property>
+        <property>
+            <from dataType="payload" name="SrcIp"/>
+            <to name="SrcIp" type="string"/>
+        </property>
+        <property>
+            <from dataType="payload" name="DestIp"/>
+            <to name="DesrIp" type="string"/>
+        </property>
+        <property>
+            <from dataType="payload" name="size"/>
+            <to name="size" type="long"/>
+        </property>
+        <property>
+            <from dataType="payload" name="timestamp"/>
+            <to name="timestamp" type="string"/>
+        </property>
+    </mapping>
+    <to streamName="org.wso2.default.stream.nout" version="1.0.0"/>
+</eventBuilder>

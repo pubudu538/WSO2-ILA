@@ -1,0 +1,35 @@
+DROP TABLE dailyusage;
+DROP TABLE weeklyusage;
+
+CREATE EXTERNAL TABLE IF NOT EXISTS dailyusage(
+	userIp STRING, siteIp STRING,  amount INT, day STRING) 
+	STORED BY 'org.wso2.carbon.hadoop.hive.jdbc.storage.JDBCStorageHandler' 
+	TBLPROPERTIES ( 
+    'wso2.carbon.datasource.name'='Log_new',
+	'hive.jdbc.update.on.duplicate' = 'true' , 
+	'hive.jdbc.primary.key.fields' = 'userIp,siteIp,day' , 
+	'hive.jdbc.table.create.query' = 
+	'CREATE TABLE dailyusage (userIp CHAR(15) NOT NULL , 
+	siteIp CHAR(15) NOT NULL, amount  INT, day CHAR(10), PRIMARY KEY(userIp,siteIp,day))' );
+	
+	
+CREATE EXTERNAL TABLE IF NOT EXISTS weeklyusage(
+	userIp STRING, siteIp STRING,  amount INT, year INT, week INT) 
+	STORED BY 'org.wso2.carbon.hadoop.hive.jdbc.storage.JDBCStorageHandler' 
+	TBLPROPERTIES ( 
+    'wso2.carbon.datasource.name'='Log_new',
+	'hive.jdbc.update.on.duplicate' = 'true' , 
+	'hive.jdbc.primary.key.fields' = 'userIp,siteIp,year,week' , 
+	'hive.jdbc.table.create.query' = 
+	'CREATE TABLE weeklyusage (userIp CHAR(15) NOT NULL , 
+	siteIp CHAR(15) NOT NULL, amount  INT, year INT, week INT, PRIMARY KEY(userIp,siteIp,year,week))' );
+	
+
+	
+insert overwrite table weeklyusage 
+	select userIp, SiteIp, sum(amount) as amount, year(day),weekofyear(day)  from dailyusage
+	where year(day)==year(date_sub(to_date(from_unixtime(unix_timestamp())),1))
+	and weekofyear(day)==weekofyear(date_sub(to_date(from_unixtime(unix_timestamp())),1))
+	group by userIp, SiteIp, year(day),weekofyear(day);
+
+                                    

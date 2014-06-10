@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<executionPlan name="sum_calculator" statistics="disable"
+  trace="disable" xmlns="http://wso2.org/carbon/eventprocessor">
+  <description/>
+  <siddhiConfiguration>
+    <property name="siddhi.persistence.snapshot.time.interval.minutes">0</property>
+    <property name="siddhi.enable.distributed.processing">false</property>
+  </siddhiConfiguration>
+  <importedStreams>
+    <stream as="str" name="org.wso2.default.stream.nout" version="1.0.0"/>
+  </importedStreams>
+  <queryExpressions><![CDATA[
+  define table internal_servers (server_id int, ip_address string, description string)
+from ('datasource.name'='cepDataSource', 'database.name'='BAM_Log_Analyzer', 'table.name'='internal_server');
+ from str[ SrcIp contains '10.100.' and (not (SrcIp contains '.10.100') and not (DesrIp contains '10.100.' and not (DesrIp contains '.10.100')) )]#window.time( 5 min )
+select SrcIp, sum(size) as bandwidth
+group by SrcIp
+insert into currentsums for current-events
+;
+from currentsums[bandwidth>100]
+select SrcIp
+insert into shouldNotify;
+define table users (user_id int, full_name string, user_name string, mac_address string, ip_address string)
+from ('datasource.name'='cepDataSource', 'database.name'='BAM_Log_Analyzer', 'table.name'='user');
+from shouldNotify#window.length(1) join users
+on shouldNotify.SrcIp==users.ip_address
+select users.full_name, users.user_name
+insert into userOut;
+]]></queryExpressions>
+  <exportedStreams>
+    <stream name="userOut" passthroughFlow="enable" valueOf="userOut" version="1.0.0"/>
+  </exportedStreams>
+</executionPlan>

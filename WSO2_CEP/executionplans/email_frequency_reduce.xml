@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<executionPlan name="email_frequency_reduce" statistics="disable"
+  trace="disable" xmlns="http://wso2.org/carbon/eventprocessor">
+  <description/>
+  <siddhiConfiguration>
+    <property name="siddhi.persistence.snapshot.time.interval.minutes">0</property>
+    <property name="siddhi.enable.distributed.processing">false</property>
+  </siddhiConfiguration>
+  <importedStreams>
+    <stream as="userOut" name="userOut" version="1.0.0"/>
+  </importedStreams>
+  <queryExpressions><![CDATA[
+
+from userOut#window.time( 5 min ) as a join userOut#window.length( 1 ) as b
+	on a.user_name == b.user_name
+	select a.full_name as full_name, a.user_name as user_name, count(a.user_name) as frequency
+	group by full_name, user_name
+	insert into counts;
+from counts[frequency == 1]
+	select user_name, full_name
+	insert into mail_out;
+]]></queryExpressions>
+  <exportedStreams>
+    <stream name="mail_out" passthroughFlow="enable" valueOf="mail_out" version="1.0.0"/>
+  </exportedStreams>
+</executionPlan>

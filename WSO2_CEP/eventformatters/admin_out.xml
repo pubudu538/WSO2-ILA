@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<eventFormatter name="admin_out" statistics="disable" trace="disable" xmlns="http://wso2.org/carbon/eventformatter">
+  <from streamName="mail_out" version="1.0.0"/>
+  <mapping customMapping="enable" type="text">
+    <inline>Hi Admin, 
+{{full_name}} is using high bandwidth.
+Thank You.</inline>
+  </mapping>
+  <to eventAdaptorName="admin_out" eventAdaptorType="email">
+    <property name="email.address">pubudug@wso2.com</property>
+    <property name="email.subject">Log Analyzer Notification [Test]</property>
+  </to>
+</eventFormatter>

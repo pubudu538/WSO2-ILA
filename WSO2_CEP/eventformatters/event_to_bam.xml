@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<eventFormatter name="event_to_bam" statistics="disable" trace="enable" xmlns="http://wso2.org/carbon/eventformatter">
+  <from streamName="dbstream" version="1.0.0"/>
+  <mapping customMapping="enable" type="wso2event">
+    <payloadData>
+      <property>
+        <from name="SrcIp"/>
+        <to name="UserIp" type="string"/>
+      </property>
+      <property>
+        <from name="DesrIp"/>
+        <to name="SiteIp" type="string"/>
+      </property>
+      <property>
+        <from name="size"/>
+        <to name="size" type="long"/>
+      </property>
+      <property>
+        <from name="timestamp"/>
+        <to name="timestamp" type="string"/>
+      </property>
+    </payloadData>
+  </mapping>
+  <to eventAdaptorName="bam_out" eventAdaptorType="wso2event">
+    <property name="stream">to_bam</property>
+    <property name="version">1.0.0</property>
+  </to>
+</eventFormatter>
